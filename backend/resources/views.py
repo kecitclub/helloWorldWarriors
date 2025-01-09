@@ -1,23 +1,17 @@
 from rest_framework import generics
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from .models import Resources, Category
-from .serializer import ResourcesSerializer, CategorySerializer
+from .models import Resources
+from .serializer import ResourcesSerializer
 
-# List and Create Resources
-class ResourcesListCreateView(generics.ListCreateAPIView):
+class ResourcesListCreate(generics.ListCreateAPIView):
+    """
+    View to list all resources or create a new resource.
+    """
     queryset = Resources.objects.all()
     serializer_class = ResourcesSerializer
 
-    def perform_create(self, serializer):
-        serializer.save()
-
-# List and Create Categories
-class CategoryListCreateView(generics.ListCreateAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-
-# Retrieve, Update, and Delete a Resource
-class ResourcesDetailView(generics.RetrieveUpdateDestroyAPIView):
+class ResourcesRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    """
+    View to retrieve, update or delete a resource.
+    """
     queryset = Resources.objects.all()
     serializer_class = ResourcesSerializer
