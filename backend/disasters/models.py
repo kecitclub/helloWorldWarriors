@@ -53,15 +53,15 @@ class DisasterReport(models.Model):
     reporter_contact = models.CharField(max_length=50)
     severity_level = models.CharField(
         max_length=20,
-        choices=Severity,
+        choices=Severity.choices,
         default="Low",
     )    
     latitude = models.FloatField()
     longitude = models.FloatField()
     status = models.CharField(
         max_length=20,
-        choices=DisasterStatus,
-        default="Pending"
+        choices=DisasterStatus.choices,
+        default="Reported"
     )
     reported_at = models.DateTimeField(auto_now_add=True)
 
