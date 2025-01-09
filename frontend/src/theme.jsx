@@ -4,10 +4,10 @@ import { createTheme } from '@mui/material/styles';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1976d2', // Default blue
+      main: '#669900', // Default blue
     },
     secondary: {
-      main: '#ff4081', // Default pink
+      main: '#cc0000', // Default pink
     },
   },
   typography: {

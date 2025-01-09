@@ -1,13 +1,13 @@
 import React from 'react';
 import Navbar from './components/Navbar';
-import Home from "./pages/Homepage";  // Ensure the file is 'Home.jsx'
+import HomePage from "./pages/Homepage";  
 
 
 const App = () => {
   return (
     <>
       <Navbar />
-      <Home />
+      <HomePage />
     </>
   );
 };

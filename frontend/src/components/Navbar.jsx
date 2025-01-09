@@ -17,9 +17,12 @@ const Navbar = () => {
           RahatSutra
         </Typography>
         <Button color="inherit">Home</Button>
-        <Button color="inherit">About</Button>
-        <Button color="inherit">Services</Button>
+        <Button color="inherit" href="#about">About</Button>
+        <Button color="inherit" >Services</Button>
         <Button color="inherit">Contact</Button>
+        <Button variant="contained" color="secondary">
+            Report Disaster
+          </Button>
       </Toolbar>
     </AppBar>
   );
