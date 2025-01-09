@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   return (
+
     <AppBar position="sticky" sx={{ backgroundColor: '#d32f2f' }}>
       <Container maxWidth="lg">
         <Toolbar>
@@ -89,6 +90,24 @@ const Navbar = () => {
           </Button>
         </Toolbar>
       </Container>
+
+    <AppBar position="static">
+      <Toolbar>
+        <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
+          <MenuIcon />
+        </IconButton>
+        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          RahatSutra
+        </Typography>
+        <Button color="inherit">Home</Button>
+        <Button color="inherit" href="#about">About</Button>
+        <Button color="inherit" >Services</Button>
+        <Button color="inherit">Contact</Button>
+        <Button variant="contained" color="secondary">
+            Report Disaster
+          </Button>
+      </Toolbar>
+
     </AppBar>
   );
 };
