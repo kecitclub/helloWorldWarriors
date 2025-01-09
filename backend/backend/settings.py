@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import environ
 import os
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,8 +30,9 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG', default=False)
 
-ALLOWED_HOSTS = []
-
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # Add your frontend URL here
+]
 
 # Application definition
 
@@ -45,7 +47,11 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'djoser',
     'corsheaders',
+    'disasters',
+    'users',
+    'resources',
 ]
+
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -92,6 +98,12 @@ DATABASES = {
     }
 }
 
+EMAIL_BACKEND = env('EMAIL_BACKEND')
+EMAIL_HOST= env('EMAIL_HOST')
+EMAIL_PORT= env('EMAIL_PORT')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD= env('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = env('EMAIL_USE_TLS') 
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -134,4 +146,39 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+SIMPLE_JWT = {
+
+   'ACCESS_TOKEN_LIFETIME' :timedelta(days=30),
+   'ACCESS_TOKEN_LIFETIME' :timedelta(days=30), 
+   'AUTH_HEADER_TYPES': ('Bearer',),
+   'ROTATE_REFRESH_TOKENS': True,
+   'BLACKLIST_AFTER_ROTATION': True,
+}
+
+REST_FRAMEWORK = {
+
+    'DEFAULT_AUTHENTICATION_CLASSES': (       
+        'rest_framework_simplejwt.authentication.JWTAuthentication',      
+    ),
+    
+    
+}
+DOMAIN= 'DOMAIN'
+SITE_NAME= 'RahatSutra'
+DJOSER= {
+    'USER_CREATE_PASSWORD_RETYPE' : True  ,
+    'ACTIVATION_URL' :'activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL' : True ,
+    'SEND_CONFIRMATION_EMAIL' : True,
+    'TOKEN_MODEL' :None,
+
+    'SERIALIZERS' : {
+        'user_create' :'users.serializers.UserCreateSerializer',
+        'user' :'users.serializers.UserCreateSerializer',
+        'token_create': 'djoser.serializers.TokenCreateSerializer',
+        'token': 'djoser.serializers.TokenSerializer',
+      },
+}
+
+AUTH_USER_MODEL = "users.User"
 CORS_ALLOW_ALL_ORIGINS = True
