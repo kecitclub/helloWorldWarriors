@@ -1,43 +1,41 @@
 from rest_framework import serializers
-from .models import Resources, Category
+from .models import Item, Category, Resources
+
+class ItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Item
+        fields = ['name', 'quantity', 'description']
 
 class CategorySerializer(serializers.ModelSerializer):
+    items = ItemSerializer(many=True)
+
     class Meta:
         model = Category
-        fields = ['id', 'name', 'quantity']
+        fields = ['name', 'items']
+
+    def create(self, validated_data):
+        # Handle the nested items creation
+        items_data = validated_data.pop('items')
+        category = Category.objects.create(**validated_data)
+        for item_data in items_data:
+            item = Item.objects.create(**item_data)
+            category.items.add(item)
+        return category
 
 class ResourcesSerializer(serializers.ModelSerializer):
-    categories = CategorySerializer()  # Allows writable nested fields for creating/updating categories
+    category = CategorySerializer()
 
     class Meta:
         model = Resources
-        fields = ['id', 'name', 'description', 'categories', 'drop_off_location', 'pick_up_location']
+        fields = ['drop_off_location', 'pick_up_location', 'category']
 
     def create(self, validated_data):
-        # Extract the nested category data
-        category_data = validated_data.pop('categories')
-        
-        # Create or update the Category instance
-        category, _ = Category.objects.get_or_create(**category_data)
-        
-        # Create the Resources instance
-        resource = Resources.objects.create(categories=category, **validated_data)
-        return resource
+        # Extract and handle category creation
+        category_data = validated_data.pop('category')
+        category_serializer = CategorySerializer(data=category_data)
+        if category_serializer.is_valid(raise_exception=True):
+            category = category_serializer.save()
 
-    def update(self, instance, validated_data):
-        # Extract the nested category data
-        category_data = validated_data.pop('categories', None)
-        
-        # Update the Category instance if needed
-        if category_data:
-            category, _ = Category.objects.update_or_create(
-                id=instance.categories.id,
-                defaults=category_data
-            )
-            instance.categories = category
-        
-        # Update the Resources instance
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
-        return instance
+        # Create Resources instance
+        resources = Resources.objects.create(category=category, **validated_data)
+        return resources
