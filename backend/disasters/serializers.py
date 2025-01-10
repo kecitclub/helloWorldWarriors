@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Disaster, DisasterReport
+from .models import Disaster, DisasterReport, ResourceRequest
 
 class DisasterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -31,7 +31,14 @@ class DisasterReportSerializer(serializers.ModelSerializer):
             'severity_level',
             'latitude',
             'longitude',
-            'status',
-            'reported_at'
+            'reported_at',
+            'resource_required'
         ]
         read_only_fields = ['id', 'reported_at']
+
+class ResourceRequestSerializer(serializers.ModelSerializer):
+    disaster_report = serializers.PrimaryKeyRelatedField(queryset=DisasterReport.objects.all())
+
+    class Meta:
+        model = ResourceRequest
+        fields = ['id', 'disaster_report', 'requires_volunteer', 'volunteers_type', 'urgency_level', 'resources_needed']
