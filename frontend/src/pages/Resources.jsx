@@ -111,8 +111,21 @@ const Resources = () => {
   };
 
   return (
-    <Container maxWidth="sm" style={{ marginTop: '2rem' }}>
-      <Typography variant="h4" align="center" gutterBottom>
+    <Container
+      maxWidth="xs"  // Adjusted the maxWidth to make the form more compact
+      sx={{
+        marginTop: '2rem',
+        backgroundColor: '#ffffff',
+        borderRadius: 2,
+        padding: 3,
+        boxShadow: 3,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <Typography variant="h4" align="center" gutterBottom sx={{ fontFamily: 'Roboto', fontWeight: 'bold' }}>
         Create New Resources
       </Typography>
 
@@ -125,6 +138,13 @@ const Resources = () => {
           value={dropOffLocation}
           onChange={(e) => setDropOffLocation(e.target.value)}
           required
+          sx={{
+            borderRadius: '8px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            '&:hover': {
+              boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
+            },
+          }}
         />
         <TextField
           fullWidth
@@ -133,6 +153,13 @@ const Resources = () => {
           value={pickUpLocation}
           onChange={(e) => setPickUpLocation(e.target.value)}
           required
+          sx={{
+            borderRadius: '8px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            '&:hover': {
+              boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
+            },
+          }}
         />
 
         <Box mt={2}>
@@ -142,6 +169,13 @@ const Resources = () => {
             onChange={handleCategoryChange}
             displayEmpty
             required
+            sx={{
+              borderRadius: '8px',
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+              '&:hover': {
+                boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
+              },
+            }}
           >
             <MenuItem value="" disabled>
               Select Category
@@ -163,6 +197,13 @@ const Resources = () => {
           value={formData.name}
           onChange={handleChange}
           required
+          sx={{
+            borderRadius: '8px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            '&:hover': {
+              boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
+            },
+          }}
         />
         <TextField
           fullWidth
@@ -173,6 +214,13 @@ const Resources = () => {
           value={formData.quantity}
           onChange={handleChange}
           required
+          sx={{
+            borderRadius: '8px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            '&:hover': {
+              boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
+            },
+          }}
         />
         <TextField
           fullWidth
@@ -184,6 +232,13 @@ const Resources = () => {
           required
           multiline
           rows={4}
+          sx={{
+            borderRadius: '8px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            '&:hover': {
+              boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
+            },
+          }}
         />
 
         <Button
@@ -192,6 +247,14 @@ const Resources = () => {
           fullWidth
           style={{ marginTop: '1rem' }}
           onClick={handleAddResource}
+          sx={{
+            borderRadius: '8px',
+            fontWeight: 'bold',
+            '&:hover': {
+              backgroundColor: '#c0392b',
+              color: '#fff',
+            },
+          }}
         >
           Add Resource
         </Button>
@@ -214,6 +277,14 @@ const Resources = () => {
           fullWidth
           style={{ marginTop: '1rem' }}
           disabled={loading}
+          sx={{
+            borderRadius: '8px',
+            fontWeight: 'bold',
+            backgroundColor: '#C0392B', // Reddish Maroon color
+            '&:hover': {
+              backgroundColor: '#E74C3C', // Lighter red for hover
+            },
+          }}
         >
           {loading ? 'Submitting...' : 'Submit All Resources'}
         </Button>

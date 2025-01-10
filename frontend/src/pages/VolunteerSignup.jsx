@@ -42,7 +42,6 @@ const VolunteerSignup = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Handle input changes (text fields, checkboxes, etc.)
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({
@@ -51,7 +50,6 @@ const VolunteerSignup = () => {
     });
   };
 
-  // Handle multiple select changes for arrays
   const handleSelectChange = (e, field) => {
     setFormData({
       ...formData,
@@ -59,7 +57,6 @@ const VolunteerSignup = () => {
     });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -85,7 +82,6 @@ const VolunteerSignup = () => {
         return;
       }
 
-      // Send volunteer signup request with the token in the Authorization header
       const response = await axios.post(
         "http://127.0.0.1:8000/users/volunteer/register/",
         volunteerPayload,
@@ -97,8 +93,6 @@ const VolunteerSignup = () => {
       );
 
       alert("Volunteer signup successful!");
-
-      // Reset form data after successful submission
       setFormData({
         address: "",
         response_radius: 20,
@@ -114,21 +108,36 @@ const VolunteerSignup = () => {
       navigate("/"); // Navigate to homepage after successful signup
     } catch (error) {
       console.error("Volunteer Signup Error:", error.response?.data || error.message);
-
-      // Display more informative error messages
-      if (error.response) {
-        alert(`Error: ${error.response?.data?.detail || error.response?.data?.message || error.message}`);
-      } else {
-        alert("Volunteer signup failed. Please try again.");
-      }
+      alert("Volunteer signup failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Container maxWidth="sm" style={{ marginTop: "2rem" }}>
-      <Typography variant="h4" align="center" gutterBottom>
+    <Container
+      maxWidth="sm"
+      sx={{
+        marginTop: "2rem",
+        backgroundColor: "#ffffff",
+        borderRadius: 2,
+        padding: 3,
+        boxShadow: 3,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Typography
+        variant="h4"
+        align="center"
+        gutterBottom
+        sx={{
+          fontFamily: "Roboto", // Same font as previous pages
+          fontWeight: "bold",
+        }}
+      >
         Volunteer Signup
       </Typography>
       <form onSubmit={handleSubmit}>
@@ -140,6 +149,13 @@ const VolunteerSignup = () => {
           value={formData.address}
           onChange={handleChange}
           required
+          sx={{
+            borderRadius: "8px",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            "&:hover": {
+              boxShadow: "0 6px 10px rgba(0, 0, 0, 0.15)",
+            },
+          }}
         />
         <TextField
           fullWidth
@@ -150,6 +166,13 @@ const VolunteerSignup = () => {
           value={formData.response_radius}
           onChange={handleChange}
           required
+          sx={{
+            borderRadius: "8px",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            "&:hover": {
+              boxShadow: "0 6px 10px rgba(0, 0, 0, 0.15)",
+            },
+          }}
         />
         <FormControl fullWidth margin="normal">
           <InputLabel>Days Available</InputLabel>
@@ -158,6 +181,13 @@ const VolunteerSignup = () => {
             value={formData.days_available}
             onChange={(e) => handleSelectChange(e, "days_available")}
             renderValue={(selected) => selected.join(", ")}
+            sx={{
+              borderRadius: "8px",
+              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+              "&:hover": {
+                boxShadow: "0 6px 10px rgba(0, 0, 0, 0.15)",
+              },
+            }}
           >
             {daysOptions.map((day) => (
               <MenuItem key={day} value={day}>
@@ -173,6 +203,13 @@ const VolunteerSignup = () => {
             value={formData.time_preferences}
             onChange={(e) => handleSelectChange(e, "time_preferences")}
             renderValue={(selected) => selected.join(", ")}
+            sx={{
+              borderRadius: "8px",
+              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+              "&:hover": {
+                boxShadow: "0 6px 10px rgba(0, 0, 0, 0.15)",
+              },
+            }}
           >
             {timeOptions.map((time) => (
               <MenuItem key={time} value={time}>
@@ -188,6 +225,13 @@ const VolunteerSignup = () => {
             value={formData.volunteering_area}
             onChange={(e) => handleSelectChange(e, "volunteering_area")}
             renderValue={(selected) => selected.join(", ")}
+            sx={{
+              borderRadius: "8px",
+              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+              "&:hover": {
+                boxShadow: "0 6px 10px rgba(0, 0, 0, 0.15)",
+              },
+            }}
           >
             {volunteeringAreas.map((area) => (
               <MenuItem key={area} value={area}>
@@ -204,6 +248,13 @@ const VolunteerSignup = () => {
           value={formData.occupation}
           onChange={handleChange}
           required
+          sx={{
+            borderRadius: "8px",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            "&:hover": {
+              boxShadow: "0 6px 10px rgba(0, 0, 0, 0.15)",
+            },
+          }}
         />
         <FormControlLabel
           control={
@@ -223,6 +274,13 @@ const VolunteerSignup = () => {
           value={formData.emergency_contact_name}
           onChange={handleChange}
           required
+          sx={{
+            borderRadius: "8px",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            "&:hover": {
+              boxShadow: "0 6px 10px rgba(0, 0, 0, 0.15)",
+            },
+          }}
         />
         <TextField
           fullWidth
@@ -232,18 +290,35 @@ const VolunteerSignup = () => {
           value={formData.emergency_contact_no}
           onChange={handleChange}
           required
+          sx={{
+            borderRadius: "8px",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            "&:hover": {
+              boxShadow: "0 6px 10px rgba(0, 0, 0, 0.15)",
+            },
+          }}
         />
-        <Box mt={2}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            disabled={loading}
-          >
-            {loading ? "Submitting..." : "Submit"}
-          </Button>
-        </Box>
+<Box mt={2}>
+  <Button
+    type="submit"
+    variant="contained"
+    style={{
+      backgroundColor: "#800000", // Maroon color
+      borderRadius: "8px",
+      boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+      transition: "background-color 0.3s, box-shadow 0.3s", // Smooth transition for background color and shadow
+      "&:hover": {
+        backgroundColor: "#660000", // Darker maroon on hover
+        boxShadow: "0 6px 10px rgba(0, 0, 0, 0.2)", // More prominent shadow on hover
+      },
+    }}
+    fullWidth
+    disabled={loading}
+  >
+    {loading ? "Submitting..." : "Submit"}
+  </Button>
+</Box>
+
       </form>
     </Container>
   );

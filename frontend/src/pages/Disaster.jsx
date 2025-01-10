@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Container, TextField, Button, MenuItem, Select, InputLabel, FormControl, Grid, Typography } from "@mui/material";
+import {
+  Container,
+  TextField,
+  Button,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+  Grid,
+  Typography,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -13,28 +23,28 @@ const severityLevels = [
 
 const DisasterReportForm = () => {
   const [formData, setFormData] = useState({
-    disaster: null, // Disaster will be fetched from backend
+    disaster: "", // Disaster ID
     severityLevel: "Low",
     description: "",
     reporterFirstName: "",
     reporterLastName: "",
     reporterContact: "",
-    requiresResource: false,
-    volunteersType: "",
-    urgencyLevel: "Medium",
-    resourcesNeeded: "",
+    requiresResource: "false", // Stored as a string for compatibility
+    volunteersType: "[]", // JSON array as string
+    urgencyLevel: "Low",
+    resourcesNeeded: "[]", // JSON array as string
   });
 
   const [disasters, setDisasters] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Fetch disasters from backend
+  // Fetch disasters from the backend
   useEffect(() => {
     const fetchDisasters = async () => {
       try {
         const response = await axios.get("http://127.0.0.1:8000/disasters/");
-        setDisasters(response.data); // Assuming the response is an array of disaster objects
+        setDisasters(response.data);
       } catch (error) {
         console.error("Error fetching disasters:", error);
         alert("Failed to fetch disaster data. Please try again.");
@@ -51,41 +61,62 @@ const DisasterReportForm = () => {
     });
   };
 
+  const safeParseJSON = (str) => {
+    try {
+      return JSON.parse(str);
+    } catch {
+      return [];
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
+    // Validate required fields
+    if (!formData.reporterContact || !/^[0-9]+$/.test(formData.reporterContact)) {
+      alert("Please enter a valid contact number.");
+      setLoading(false);
+      return;
+    }
+
     try {
       // Step 1: Create the disaster report
-      const disasterReportResponse = await axios.post("http://127.0.0.1:8000/disasters/report/", {
-        disaster: formData.disaster, // Fetch the disaster ID from the selected disaster
-        description: formData.description,
-        reporter_first_name: formData.reporterFirstName,
-        reporter_last_name: formData.reporterLastName,
-        reporter_contact: formData.reporterContact,
-        severity_level: formData.severityLevel,
-        latitude: 0, // Set latitude as needed (this can be dynamic based on user's location)
-        longitude: 0, // Set longitude as needed (this can be dynamic based on user's location)
-      });
+      const disasterReportResponse = await axios.post(
+        "http://127.0.0.1:8000/disasters/add/",
+        {
+          disaster: formData.disaster,
+          description: formData.description,
+          reporter_first_name: formData.reporterFirstName,
+          reporter_last_name: formData.reporterLastName,
+          reporter_contact: formData.reporterContact,
+          severity_level: formData.severityLevel,
+          latitude: 0, // Replace with actual coordinates if available
+          longitude: 0, // Replace with actual coordinates if available
+        }
+      );
+
       console.log("Disaster Report Created:", disasterReportResponse.data);
 
-      // Step 2: Create the resource request if resources are required
-      if (formData.requiresResource) {
-        const resourceRequestData = {
-          disaster_report: disasterReportResponse.data.id,  // Linking the disaster report ID
-          requires_volunteer: formData.requiresResource,
-          volunteers_type: formData.volunteersType ? JSON.parse(formData.volunteersType) : [],
-          urgency_level: formData.urgencyLevel,
-          resources_needed: formData.resourcesNeeded ? JSON.parse(formData.resourcesNeeded) : [],
-        };
+      // Step 2: Create resource request if required
+      if (formData.requiresResource === "true") {
+        const resourceRequestResponse = await axios.post(
+          `http://127.0.0.1:8000/request-resource/${disasterReportResponse.data.id}/`,
+          {
+            disaster_report: disasterReportResponse.data.id,
+            requires_volunteer: formData.requiresResource === "true",
+            volunteers_type: safeParseJSON(formData.volunteersType),
+            urgency_level: formData.urgencyLevel,
+            resources_needed: safeParseJSON(formData.resourcesNeeded),
+          }
+        );
 
-        const resourceRequestResponse = await axios.post("http://127.0.0.1:8000/resources/create/", resourceRequestData);
         console.log("Resource Request Created:", resourceRequestResponse.data);
       }
 
-      // Step 3: Navigate to the landing page (or show a success message)
+      // Step 3: Navigate to the landing page
       alert("Disaster Report Submitted Successfully!");
-      navigate("/landing"); // Change to the desired path after submission
+      navigate("/");
     } catch (error) {
       console.error("Error submitting disaster report:", error);
       alert("Failed to submit the report. Please try again.");
@@ -117,7 +148,7 @@ const DisasterReportForm = () => {
           </Select>
         </FormControl>
 
-        {/* Description of the Disaster */}
+        {/* Description */}
         <TextField
           fullWidth
           margin="normal"
@@ -189,35 +220,37 @@ const DisasterReportForm = () => {
           <Select
             name="requiresResource"
             value={formData.requiresResource}
-            onChange={handleChange}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                requiresResource: e.target.value,
+              })
+            }
             label="Requires Resource"
           >
-            <MenuItem value={false}>No</MenuItem>
-            <MenuItem value={true}>Yes</MenuItem>
+            <MenuItem value="false">No</MenuItem>
+            <MenuItem value="true">Yes</MenuItem>
           </Select>
         </FormControl>
 
-        {formData.requiresResource && (
+        {formData.requiresResource === "true" && (
           <>
-            {/* Volunteer Type */}
             <TextField
               fullWidth
               margin="normal"
-              label="Volunteer Types (JSON format)"
+              label="Volunteer Types (JSON)"
               name="volunteersType"
               value={formData.volunteersType}
               onChange={handleChange}
             />
-            {/* Resources Needed */}
             <TextField
               fullWidth
               margin="normal"
-              label="Resources Needed (JSON format)"
+              label="Resources Needed (JSON)"
               name="resourcesNeeded"
               value={formData.resourcesNeeded}
               onChange={handleChange}
             />
-            {/* Urgency Level */}
             <FormControl fullWidth margin="normal">
               <InputLabel>Urgency Level</InputLabel>
               <Select
@@ -240,7 +273,20 @@ const DisasterReportForm = () => {
         <Button
           type="submit"
           variant="contained"
-          color="primary"
+          style={{
+            backgroundColor: "#800000", // Maroon color
+            color: "#fff", // White text
+            fontFamily: "Arial, sans-serif", // Same font as before
+            fontSize: "16px", // Same font size as before
+            padding: "12px", // Adjust padding for consistent size
+            borderRadius: "8px", // Rounded corners
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // Subtle shadow effect
+            transition: "background-color 0.3s, box-shadow 0.3s", // Smooth transition for background color and shadow
+            "&:hover": {
+              backgroundColor: "#660000", // Darker maroon on hover
+              boxShadow: "0 6px 10px rgba(0, 0, 0, 0.2)", // More prominent shadow on hover
+            },
+          }}
           fullWidth
           style={{ marginTop: "1rem" }}
           disabled={loading}
