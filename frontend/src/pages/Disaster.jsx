@@ -13,7 +13,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-// Define severity levels for dropdowns
 const severityLevels = [
   { value: "Low", label: "Low" },
   { value: "Moderate", label: "Moderate" },
@@ -23,23 +22,22 @@ const severityLevels = [
 
 const DisasterReportForm = () => {
   const [formData, setFormData] = useState({
-    disaster: "", // Disaster ID
+    disaster: "",
     severityLevel: "Low",
     description: "",
     reporterFirstName: "",
     reporterLastName: "",
     reporterContact: "",
-    requiresResource: "false", // Stored as a string for compatibility
-    volunteersType: "[]", // JSON array as string
+    requiresResource: "false",
+    volunteersType: "[]",
     urgencyLevel: "Low",
-    resourcesNeeded: "[]", // JSON array as string
+    resourcesNeeded: "[]",
   });
 
   const [disasters, setDisasters] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Fetch disasters from the backend
   useEffect(() => {
     const fetchDisasters = async () => {
       try {
@@ -55,10 +53,7 @@ const DisasterReportForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const safeParseJSON = (str) => {
@@ -69,19 +64,31 @@ const DisasterReportForm = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    // Validate required fields
+  const validateFields = () => {
     if (!formData.reporterContact || !/^[0-9]+$/.test(formData.reporterContact)) {
       alert("Please enter a valid contact number.");
-      setLoading(false);
-      return;
+      return false;
     }
 
+    if (formData.requiresResource === "true") {
+      try {
+        safeParseJSON(formData.volunteersType);
+        safeParseJSON(formData.resourcesNeeded);
+      } catch {
+        alert("Please enter valid JSON for volunteers and resources.");
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateFields()) return;
+    setLoading(true);
+
     try {
-      // Step 1: Create the disaster report
       const disasterReportResponse = await axios.post(
         "http://127.0.0.1:8000/disasters/add/",
         {
@@ -91,30 +98,24 @@ const DisasterReportForm = () => {
           reporter_last_name: formData.reporterLastName,
           reporter_contact: formData.reporterContact,
           severity_level: formData.severityLevel,
-          latitude: 0, // Replace with actual coordinates if available
-          longitude: 0, // Replace with actual coordinates if available
+          latitude: 0,
+          longitude: 0,
         }
       );
 
-      console.log("Disaster Report Created:", disasterReportResponse.data);
-
-      // Step 2: Create resource request if required
       if (formData.requiresResource === "true") {
-        const resourceRequestResponse = await axios.post(
+        await axios.post(
           `http://127.0.0.1:8000/request-resource/${disasterReportResponse.data.id}/`,
           {
             disaster_report: disasterReportResponse.data.id,
-            requires_volunteer: formData.requiresResource === "true",
+            requires_volunteer: true,
             volunteers_type: safeParseJSON(formData.volunteersType),
             urgency_level: formData.urgencyLevel,
             resources_needed: safeParseJSON(formData.resourcesNeeded),
           }
         );
-
-        console.log("Resource Request Created:", resourceRequestResponse.data);
       }
 
-      // Step 3: Navigate to the landing page
       alert("Disaster Report Submitted Successfully!");
       navigate("/");
     } catch (error) {
@@ -126,12 +127,11 @@ const DisasterReportForm = () => {
   };
 
   return (
-    <Container maxWidth="sm" style={{ marginTop: "2rem" }}>
+    <Container maxWidth="sm" sx={{ mt: 4 }}>
       <Typography variant="h4" align="center" gutterBottom>
         Disaster Report Form
       </Typography>
       <form onSubmit={handleSubmit}>
-        {/* Disaster Type Dropdown */}
         <FormControl fullWidth margin="normal" required>
           <InputLabel>Disaster</InputLabel>
           <Select
@@ -148,7 +148,6 @@ const DisasterReportForm = () => {
           </Select>
         </FormControl>
 
-        {/* Description */}
         <TextField
           fullWidth
           margin="normal"
@@ -161,12 +160,10 @@ const DisasterReportForm = () => {
           rows={4}
         />
 
-        {/* Reporter Info */}
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <TextField
               fullWidth
-              margin="normal"
               label="Reporter First Name"
               name="reporterFirstName"
               value={formData.reporterFirstName}
@@ -177,7 +174,6 @@ const DisasterReportForm = () => {
           <Grid item xs={6}>
             <TextField
               fullWidth
-              margin="normal"
               label="Reporter Last Name"
               name="reporterLastName"
               value={formData.reporterLastName}
@@ -197,7 +193,6 @@ const DisasterReportForm = () => {
           required
         />
 
-        {/* Severity Level Dropdown */}
         <FormControl fullWidth margin="normal" required>
           <InputLabel>Severity Level</InputLabel>
           <Select
@@ -214,17 +209,16 @@ const DisasterReportForm = () => {
           </Select>
         </FormControl>
 
-        {/* Resource Request Section */}
         <FormControl fullWidth margin="normal">
           <InputLabel>Requires Resource</InputLabel>
           <Select
             name="requiresResource"
             value={formData.requiresResource}
             onChange={(e) =>
-              setFormData({
-                ...formData,
+              setFormData((prev) => ({
+                ...prev,
                 requiresResource: e.target.value,
-              })
+              }))
             }
             label="Requires Resource"
           >
@@ -269,26 +263,15 @@ const DisasterReportForm = () => {
           </>
         )}
 
-        {/* Submit Button */}
         <Button
           type="submit"
           variant="contained"
-          style={{
-            backgroundColor: "#800000", // Maroon color
-            color: "#fff", // White text
-            fontFamily: "Arial, sans-serif", // Same font as before
-            fontSize: "16px", // Same font size as before
-            padding: "12px", // Adjust padding for consistent size
-            borderRadius: "8px", // Rounded corners
-            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // Subtle shadow effect
-            transition: "background-color 0.3s, box-shadow 0.3s", // Smooth transition for background color and shadow
-            "&:hover": {
-              backgroundColor: "#660000", // Darker maroon on hover
-              boxShadow: "0 6px 10px rgba(0, 0, 0, 0.2)", // More prominent shadow on hover
-            },
+          sx={{
+            mt: 2,
+            backgroundColor: "#800000",
+            "&:hover": { backgroundColor: "#660000" },
           }}
           fullWidth
-          style={{ marginTop: "1rem" }}
           disabled={loading}
         >
           {loading ? "Submitting..." : "Submit Report"}

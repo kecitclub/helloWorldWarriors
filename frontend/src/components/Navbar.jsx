@@ -17,9 +17,7 @@ const Navbar = () => {
   // Check if token exists (assuming token is stored in localStorage)
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-    if (token) {
-      setIsAuthenticated(true);
-    }
+    setIsAuthenticated(!!token);
   }, []);
 
   // Handle Sign Out
@@ -33,18 +31,18 @@ const Navbar = () => {
     <AppBar position="sticky" sx={{ backgroundColor: '#d32f2f', height: '60px' }}>
       <Container maxWidth="lg">
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', height: '60px' }}>
-          {/* Menu Icon (for potential mobile menu) */}
-          <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
-            <MenuIcon />
-          </IconButton>
+          {/* Left Section: Menu Icon and Title */}
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
+              RahatSutra
+            </Typography>
+          </div>
 
-          {/* Application Title */}
-          <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
-            RahatSutra
-          </Typography>
-
-          {/* Navigation Buttons */}
-          <div sx={{ display: 'flex' }}>
+          {/* Center Section: Navigation Buttons */}
+          <div>
             <Button
               color="inherit"
               component={Link}
@@ -72,44 +70,38 @@ const Navbar = () => {
             >
               Contact
             </Button>
-
-            {/* Donor Button */}
             <Button
               color="inherit"
               component={Link}
-              to="/Resources"
+              to="/resources"
               startIcon={<LocalOfferIcon />}
-              sx={{ marginLeft: '10px' }}
+              sx={{ marginRight: '10px' }}
             >
               Donor
             </Button>
-
-            {/* Report Disaster Button */}
             <Button
               color="inherit"
               component={Link}
               to="/disaster"
               startIcon={<ReportProblemIcon />}
-              sx={{ marginLeft: '10px' }}
+              sx={{ marginRight: '10px' }}
             >
               Report Disaster
             </Button>
-
-            {/* Volunteer Signup Button */}
             <Button
               color="inherit"
               component={Link}
-              to="/VolunteerSignup"
+              to="/volunteer-signup"
               startIcon={<VolunteerActivismIcon />}
-              sx={{ marginLeft: '10px' }}
+              sx={{ marginRight: '10px' }}
             >
               Volunteer Signup
             </Button>
           </div>
 
-          {/* Sign Up or Sign Out Button (Right Side) */}
-          <div sx={{ marginLeft: 'auto' }}>
-            {!isAuthenticated && (
+          {/* Right Section: Authentication Buttons */}
+          <div>
+            {!isAuthenticated ? (
               <Button
                 color="inherit"
                 component={Link}
@@ -119,15 +111,12 @@ const Navbar = () => {
                 sx={{
                   backgroundColor: '#fff',
                   color: '#1976d2',
-                  marginLeft: '10px',
                   '&:hover': { backgroundColor: '#e3f2fd' },
                 }}
               >
                 Sign Up
               </Button>
-            )}
-
-            {isAuthenticated && (
+            ) : (
               <Button
                 color="inherit"
                 onClick={handleSignOut}
@@ -135,7 +124,6 @@ const Navbar = () => {
                 sx={{
                   backgroundColor: '#fff',
                   color: '#1976d2',
-                  marginLeft: '10px',
                   '&:hover': { backgroundColor: '#e3f2fd' },
                 }}
               >
