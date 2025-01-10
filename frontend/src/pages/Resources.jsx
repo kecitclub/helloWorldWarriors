@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Container, TextField, Button, Typography, Box, Chip } from '@mui/material';
+import { useState } from 'react';
+import { Container, TextField, Button, Typography, Box, Select, MenuItem } from '@mui/material';
 import axios from 'axios';
 
 const Resources = () => {
@@ -7,14 +7,20 @@ const Resources = () => {
     name: '',
     quantity: '',
     description: '',
-    categories: [],
+    category: '', // category will be sent as an object with a "name" key
   });
 
-  const [category, setCategory] = useState('');
+  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [resources, setResources] = useState([]);
-  const [dropOffLocation, setDropOffLocation] = useState(''); // Set Drop-off Location
-  const [pickUpLocation, setPickUpLocation] = useState(''); // Set Pick-up Location
+  const [dropOffLocation, setDropOffLocation] = useState('');
+  const [pickUpLocation, setPickUpLocation] = useState('');
+  const [availableCategories, setAvailableCategories] = useState([
+    'Electronics',
+    'Furniture',
+    'Books',
+    'Clothing',
+    'Food',
+  ]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,34 +31,32 @@ const Resources = () => {
   };
 
   const handleCategoryChange = (e) => {
-    setCategory(e.target.value);
-  };
-
-  const handleAddCategory = () => {
-    if (category && !formData.categories.includes(category)) {
-      setFormData({
-        ...formData,
-        categories: [...formData.categories, category],
-      });
-      setCategory('');
-    }
-  };
-
-  const handleRemoveCategory = (categoryToRemove) => {
     setFormData({
       ...formData,
-      categories: formData.categories.filter((category) => category !== categoryToRemove),
+      category: e.target.value,
     });
   };
 
   const handleAddResource = () => {
-    if (formData.name && formData.quantity && formData.description) {
-      setResources([...resources, { ...formData, dropOffLocation, pickUpLocation }]);
+    if (
+      formData.name &&
+      formData.quantity &&
+      formData.description &&
+      formData.category
+    ) {
+      const newItem = {
+        name: formData.name,
+        quantity: parseInt(formData.quantity, 10),
+        description: formData.description,
+        category: { name: formData.category }, // Category as a dictionary
+      };
+
+      setItems([...items, newItem]);
       setFormData({
         name: '',
         quantity: '',
         description: '',
-        categories: [],
+        category: '',
       });
     } else {
       alert('Please fill out all fields before adding a resource.');
@@ -61,16 +65,46 @@ const Resources = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!dropOffLocation || !pickUpLocation) {
+      alert('Please fill out the drop-off and pick-up locations.');
+      return;
+    }
+
+    if (items.length === 0) {
+      alert('Please add at least one resource before submitting.');
+      return;
+    }
+
     setLoading(true);
 
+    const payload = {
+      drop_off_location: dropOffLocation,
+      pick_up_location: pickUpLocation,
+      items, // Send the items array directly
+    };
+
     try {
-      const response = await axios.post('https://127.0.0.1:8000/resources', { resources });
+      console.log('Submitting payload:', JSON.stringify(payload, null, 2));
+      const response = await axios.post(
+        'http://127.0.0.1:8000/resources/resources/',
+        payload
+      );
       console.log('Resources Created:', response.data);
-      alert('Resources Created Successfully!');
-      setResources([]);
+      alert('Resources created successfully!');
+      setItems([]);
+      setDropOffLocation('');
+      setPickUpLocation('');
     } catch (error) {
-      console.error('Error creating resources:', error);
-      alert('Failed to create resources. Please try again.');
+      console.error(
+        'Error creating resources:',
+        error.response?.data || error.message
+      );
+      alert(
+        `Failed to create resources: ${
+          error.response?.data?.detail || 'Please try again.'
+        }`
+      );
     } finally {
       setLoading(false);
     }
@@ -100,6 +134,25 @@ const Resources = () => {
           onChange={(e) => setPickUpLocation(e.target.value)}
           required
         />
+
+        <Box mt={2}>
+          <Select
+            fullWidth
+            value={formData.category}
+            onChange={handleCategoryChange}
+            displayEmpty
+            required
+          >
+            <MenuItem value="" disabled>
+              Select Category
+            </MenuItem>
+            {availableCategories.map((category, index) => (
+              <MenuItem key={index} value={category}>
+                {category}
+              </MenuItem>
+            ))}
+          </Select>
+        </Box>
 
         {/* Resource Fields */}
         <TextField
@@ -133,32 +186,6 @@ const Resources = () => {
           rows={4}
         />
 
-        <Box mt={2}>
-          <TextField
-            label="Add Category"
-            value={category}
-            onChange={handleCategoryChange}
-            variant="outlined"
-            size="small"
-            style={{ marginRight: '8px' }}
-          />
-          <Button variant="outlined" onClick={handleAddCategory}>
-            Add Category
-          </Button>
-        </Box>
-
-        <Box mt={2}>
-          <Typography variant="body2">Categories:</Typography>
-          {formData.categories.map((category, index) => (
-            <Chip
-              label={category}
-              key={index}
-              onDelete={() => handleRemoveCategory(category)}
-              style={{ margin: '4px' }}
-            />
-          ))}
-        </Box>
-
         <Button
           variant="outlined"
           color="secondary"
@@ -173,9 +200,9 @@ const Resources = () => {
           Added Resources:
         </Typography>
         <Box>
-          {resources.map((resource, index) => (
+          {items.map((item, index) => (
             <Typography key={index}>
-              {index + 1}. {resource.name} - {resource.quantity} - {resource.description} - Drop-off: {resource.dropOffLocation} - Pick-up: {resource.pickUpLocation}
+              {index + 1}. Name: {item.name} - Quantity: {item.quantity} - Description: {item.description} - Category: {item.category.name}
             </Typography>
           ))}
         </Box>

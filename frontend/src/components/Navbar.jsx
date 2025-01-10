@@ -7,6 +7,7 @@ import ContactMailIcon from '@mui/icons-material/ContactMail';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer'; // Icon for Donor
 import ReportProblemIcon from '@mui/icons-material/ReportProblem'; // Icon for Report Disaster
+import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism'; // Icon for Volunteer Signup
 import { Link } from 'react-router-dom';
 
 const Navbar = () => {
@@ -86,6 +87,16 @@ const Navbar = () => {
             sx={{ marginLeft: '10px' }}
           >
             Report Disaster
+          </Button>
+          {/* Volunteer Signup Button */}
+          <Button
+            color="inherit"
+            component={Link}
+            to="/VolunteerSignup"
+            startIcon={<VolunteerActivismIcon />}
+            sx={{ marginLeft: '10px' }}
+          >
+            Volunteer Signup
           </Button>
         </Toolbar>
       </Container>

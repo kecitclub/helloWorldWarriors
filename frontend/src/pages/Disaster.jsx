@@ -1,56 +1,47 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, TextField, Button, MenuItem, Select, InputLabel, FormControl, Grid, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-// Define disaster types and severity levels for dropdowns
-const disasterTypes = [
-  { value: "Fire", label: "Fire" },
-  { value: "Earthquake", label: "Earthquake" },
-  { value: "Flood", label: "Flood" },
-];
-
+// Define severity levels for dropdowns
 const severityLevels = [
   { value: "Low", label: "Low" },
-  { value: "Medium", label: "Medium" },
+  { value: "Moderate", label: "Moderate" },
   { value: "High", label: "High" },
+  { value: "Critical", label: "Critical" },
 ];
 
 const DisasterReportForm = () => {
   const [formData, setFormData] = useState({
-    disasterType: "",
-    dateOccurred: "",
-    location: "",
-    magnitude: "",
-    severityLevel: "",
+    disaster: null, // Disaster will be fetched from backend
+    severityLevel: "Low",
     description: "",
     reporterFirstName: "",
     reporterLastName: "",
     reporterContact: "",
+    requiresResource: false,
+    volunteersType: "",
+    urgencyLevel: "Medium",
+    resourcesNeeded: "",
   });
 
+  const [disasters, setDisasters] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Function to get current location
-  const getCurrentLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setFormData({
-            ...formData,
-            location: `Latitude: ${latitude}, Longitude: ${longitude}`,
-          });
-        },
-        () => {
-          alert("Unable to retrieve your location.");
-        }
-      );
-    } else {
-      alert("Geolocation is not supported by your browser.");
-    }
-  };
+  // Fetch disasters from backend
+  useEffect(() => {
+    const fetchDisasters = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/disasters/");
+        setDisasters(response.data); // Assuming the response is an array of disaster objects
+      } catch (error) {
+        console.error("Error fetching disasters:", error);
+        alert("Failed to fetch disaster data. Please try again.");
+      }
+    };
+    fetchDisasters();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -65,20 +56,36 @@ const DisasterReportForm = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("https://your-backend-api.com/disaster-reports", formData);
-      console.log("Disaster Report Submitted:", response.data);
+      // Step 1: Create the disaster report
+      const disasterReportResponse = await axios.post("http://127.0.0.1:8000/disasters/report/", {
+        disaster: formData.disaster, // Fetch the disaster ID from the selected disaster
+        description: formData.description,
+        reporter_first_name: formData.reporterFirstName,
+        reporter_last_name: formData.reporterLastName,
+        reporter_contact: formData.reporterContact,
+        severity_level: formData.severityLevel,
+        latitude: 0, // Set latitude as needed (this can be dynamic based on user's location)
+        longitude: 0, // Set longitude as needed (this can be dynamic based on user's location)
+      });
+      console.log("Disaster Report Created:", disasterReportResponse.data);
 
-      // Navigate to the landing page with location data
-      if (formData.location) {
-        const [latitude, longitude] = formData.location
-          .replace("Latitude: ", "")
-          .replace("Longitude: ", "")
-          .split(", ")
-          .map((coord) => coord.trim());
-        navigate(`/landing?lat=${latitude}&lng=${longitude}`);
+      // Step 2: Create the resource request if resources are required
+      if (formData.requiresResource) {
+        const resourceRequestData = {
+          disaster_report: disasterReportResponse.data.id,  // Linking the disaster report ID
+          requires_volunteer: formData.requiresResource,
+          volunteers_type: formData.volunteersType ? JSON.parse(formData.volunteersType) : [],
+          urgency_level: formData.urgencyLevel,
+          resources_needed: formData.resourcesNeeded ? JSON.parse(formData.resourcesNeeded) : [],
+        };
+
+        const resourceRequestResponse = await axios.post("http://127.0.0.1:8000/resources/create/", resourceRequestData);
+        console.log("Resource Request Created:", resourceRequestResponse.data);
       }
 
+      // Step 3: Navigate to the landing page (or show a success message)
       alert("Disaster Report Submitted Successfully!");
+      navigate("/landing"); // Change to the desired path after submission
     } catch (error) {
       console.error("Error submitting disaster report:", error);
       alert("Failed to submit the report. Please try again.");
@@ -95,83 +102,16 @@ const DisasterReportForm = () => {
       <form onSubmit={handleSubmit}>
         {/* Disaster Type Dropdown */}
         <FormControl fullWidth margin="normal" required>
-          <InputLabel>Disaster Type</InputLabel>
+          <InputLabel>Disaster</InputLabel>
           <Select
-            name="disasterType"
-            value={formData.disasterType}
+            name="disaster"
+            value={formData.disaster}
             onChange={handleChange}
-            label="Disaster Type"
+            label="Disaster"
           >
-            {disasterTypes.map((disaster) => (
-              <MenuItem key={disaster.value} value={disaster.value}>
-                {disaster.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        {/* Date Occurred */}
-        <TextField
-          fullWidth
-          margin="normal"
-          label="Date Occurred"
-          type="date"
-          name="dateOccurred"
-          value={formData.dateOccurred}
-          onChange={handleChange}
-          required
-          InputLabelProps={{ shrink: true }}
-        />
-
-        {/* Location (Fetch current location button) */}
-        <TextField
-          fullWidth
-          margin="normal"
-          label="Location (Coordinates or Address)"
-          name="location"
-          value={formData.location}
-          onChange={handleChange}
-          required
-          InputProps={{
-            endAdornment: (
-              <Button
-                onClick={getCurrentLocation}
-                variant="contained"
-                color="secondary"
-                style={{ marginLeft: "1rem" }}
-              >
-                Use Current Location
-              </Button>
-            ),
-          }}
-        />
-
-        {/* Magnitude (Only visible for Earthquake) */}
-        {formData.disasterType === "Earthquake" && (
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Magnitude"
-            name="magnitude"
-            type="number"
-            value={formData.magnitude}
-            onChange={handleChange}
-            required
-          />
-        )}
-
-        {/* Severity Level Dropdown */}
-        <FormControl fullWidth margin="normal" required>
-          <InputLabel>Severity Level</InputLabel>
-          <Select
-            name="severityLevel"
-            value={formData.severityLevel}
-            onChange={handleChange}
-            label="Severity Level"
-          >
-            {severityLevels.map((severity) => (
-              <MenuItem key={severity.value} value={severity.value}>
-                {severity.label}
+            {disasters.map((disaster) => (
+              <MenuItem key={disaster.id} value={disaster.id}>
+                {disaster.disaster_type} - {disaster.date_occurred}
               </MenuItem>
             ))}
           </Select>
@@ -225,6 +165,76 @@ const DisasterReportForm = () => {
           onChange={handleChange}
           required
         />
+
+        {/* Severity Level Dropdown */}
+        <FormControl fullWidth margin="normal" required>
+          <InputLabel>Severity Level</InputLabel>
+          <Select
+            name="severityLevel"
+            value={formData.severityLevel}
+            onChange={handleChange}
+            label="Severity Level"
+          >
+            {severityLevels.map((severity) => (
+              <MenuItem key={severity.value} value={severity.value}>
+                {severity.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        {/* Resource Request Section */}
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Requires Resource</InputLabel>
+          <Select
+            name="requiresResource"
+            value={formData.requiresResource}
+            onChange={handleChange}
+            label="Requires Resource"
+          >
+            <MenuItem value={false}>No</MenuItem>
+            <MenuItem value={true}>Yes</MenuItem>
+          </Select>
+        </FormControl>
+
+        {formData.requiresResource && (
+          <>
+            {/* Volunteer Type */}
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Volunteer Types (JSON format)"
+              name="volunteersType"
+              value={formData.volunteersType}
+              onChange={handleChange}
+            />
+            {/* Resources Needed */}
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Resources Needed (JSON format)"
+              name="resourcesNeeded"
+              value={formData.resourcesNeeded}
+              onChange={handleChange}
+            />
+            {/* Urgency Level */}
+            <FormControl fullWidth margin="normal">
+              <InputLabel>Urgency Level</InputLabel>
+              <Select
+                name="urgencyLevel"
+                value={formData.urgencyLevel}
+                onChange={handleChange}
+                label="Urgency Level"
+              >
+                {severityLevels.map((severity) => (
+                  <MenuItem key={severity.value} value={severity.value}>
+                    {severity.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </>
+        )}
 
         {/* Submit Button */}
         <Button
