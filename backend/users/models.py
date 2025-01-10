@@ -6,6 +6,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 from .manager import UserManager
 
+
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=15, null=True)

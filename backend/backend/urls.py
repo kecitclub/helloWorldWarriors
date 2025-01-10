@@ -22,7 +22,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
     path('disasters/', include('disasters.urls')),
-    path('resources/', include('resources.urls')),
+    path('', include('resources.urls')),
+    path('notification/', include('notification.urls')),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt'))
 ]
+

@@ -5,6 +5,8 @@ import Home from "./pages/Homepage"; // Ensure the file name matches
 import SignUp from "./pages/SignUp"; // Ensure the file name matches
 import Resources from "./pages/Resources"; // Import the new ResourcesPage
 import DisasterReportForm from "./pages/Disaster"; // Import the Disaster report form page
+import NotificationsPage from './pages/NotificationsPage'; // Import the Notifications page
+
 
 const App = () => {
   return (
@@ -15,6 +17,8 @@ const App = () => {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/resources" element={<Resources />} /> {/* Add the Resources page route */}
         <Route path="/disaster" element={<DisasterReportForm />} /> {/* Add the Disaster report route */}
+        <Route path="/notifications" element={<NotificationsPage />} />
+
       </Routes>
     </Router>
   );

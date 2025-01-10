@@ -8,6 +8,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
+
 """
 
 from pathlib import Path
@@ -49,6 +50,7 @@ INSTALLED_APPS = [
     'disasters',
     'users',
     'resources',
+    #'notification',
 ]
 
 MIDDLEWARE = [
@@ -161,6 +163,9 @@ REST_FRAMEWORK = {
     
     
 }
+
+
+
 DOMAIN= 'DOMAIN'
 SITE_NAME= 'RahatSutra'
 DJOSER= {
@@ -180,3 +185,8 @@ DJOSER= {
 
 AUTH_USER_MODEL = "users.User"
 CORS_ALLOW_ALL_ORIGINS = True
+
+# settings.py
+PUSHER_INSTANCE_ID = "bdd329ee-9b53-499b-b0cc-0e32cf93a318"
+PUSHER_PRIMARY_KEY = "E5F6558BE05A7AA7D29EE26A17944F943B1B415B3E4D40CB6C03B8205BF718C9"
+

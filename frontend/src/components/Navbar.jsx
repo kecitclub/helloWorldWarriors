@@ -7,6 +7,7 @@ import ContactMailIcon from '@mui/icons-material/ContactMail';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer'; // Icon for Donor
 import ReportProblemIcon from '@mui/icons-material/ReportProblem'; // Icon for Report Disaster
+import NotificationsIcon from '@mui/icons-material/Notifications'; // Icon for Notifications
 import { Link } from 'react-router-dom';
 
 const Navbar = () => {
@@ -87,6 +88,11 @@ const Navbar = () => {
           >
             Report Disaster
           </Button>
+
+          {/* Notification Icon (Rightmost side) */}
+          <IconButton edge="end" color="inherit" sx={{ ml: 2 }} component={Link} to="/notifications">
+            <NotificationsIcon />
+          </IconButton>
         </Toolbar>
       </Container>
     </AppBar>
