@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppBar, Toolbar, Typography, Button, IconButton, Container } from '@mui/material';
 import { useLocation } from "react-router-dom";
 import MenuIcon from '@mui/icons-material/Menu';
@@ -10,9 +10,27 @@ import LocalOfferIcon from '@mui/icons-material/LocalOffer'; // Icon for Donor
 import ReportProblemIcon from '@mui/icons-material/ReportProblem'; // Icon for Report Disaster
 import NotificationsIcon from '@mui/icons-material/Notifications'; // Icon for Notifications
 import FeedbackIcon from '@mui/icons-material/Feedback'; // Icon for Feedback
-import { Link } from 'react-router-dom';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer'; 
+import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism'; // Icon for Volunteer Signup
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
+
+  // Check if token exists (assuming token is stored in localStorage)
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    setIsAuthenticated(!!token);
+  }, []);
+
+  // Handle Sign Out
+  const handleSignOut = () => {
+    localStorage.removeItem('authToken');
+    setIsAuthenticated(false);
+    navigate('/'); // Redirect to home after logout
+  };
+
   const location = useLocation();
 
   // Scroll to 'about' section on page load if the state is passed
@@ -103,7 +121,7 @@ const Navbar = () => {
           <Button
             variant="contained"
             sx={{
-              backgroundColor: "#802000",  // Custom color
+              backgroundColor: "#e62e00",  // Custom color
               color: "white",              // Text color
               marginLeft: '10px',
             }}
