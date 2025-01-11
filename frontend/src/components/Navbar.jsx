@@ -114,7 +114,7 @@ const Navbar = () => {
           <Button
             variant="contained"
             sx={{
-              backgroundColor: "#802000",  // Custom color
+              backgroundColor: "#e62e00",  // Custom color
               color: "white",              // Text color
               marginLeft: '10px',
             }}

@@ -1,13 +1,13 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Container, Grid, Box } from '@mui/material';
 import { styled } from '@mui/system';
-import backgroundImage from '../images/rescuee.png';
-import MapComponent from '../components/maps'; 
+//import backgroundImage from '../images/rescuee.png';
 import Paper from '@mui/material/Paper';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
 import { Link } from 'react-scroll';
 import DisasterReportsTable from "../components/tables"; // Import the DisasterReportsTable component
+import MapComponent from '../components/maps'; 
 
 const disasterData = [
   { type: "Fire", count: 61, color: "red", icon: "🔥" },
@@ -156,7 +156,8 @@ const HomePage = () => {
           Disaster Areas
         </Typography>
         <MapBox>
-          <img src="src/images/temp_in_nepal.png" alt="Static Map" style={{ width: "100%", maxWidth: "800px", borderRadius: "8px" }} />
+         <MapComponent />  
+        
         </MapBox>
       </Container>
 
