@@ -1,48 +1,26 @@
-// import React from "react";
-// import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-// import { ThemeProvider, CssBaseline } from "@mui/material";
-// import theme from "./theme"; // Import your custom theme
-// import Navbar from "./components/Navbar";
-// import Home from "./pages/Homepage"; 
-// import SignUp from "./pages/SignUp"; 
-// import Resources from "./pages/Resources"; 
-// import DisasterReportForm from "./pages/Disaster"; 
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import Home from "./pages/Homepage"; // Ensure the file name matches
+import SignUp from "./pages/SignUp"; // Ensure the file name matches
+import Resources from "./pages/Resources"; // Import the new ResourcesPage
+import DisasterReportForm from "./pages/Disaster"; // Import the Disaster report form page
 
-// const App = () => {
-//   return (
-//     <ThemeProvider theme={theme}>
-//       <CssBaseline /> 
-    
-//       <Router>
-//         <Navbar />
-//         <Routes>
-//           <Route path="/" element={<Home />} />
-//           <Route path="/signup" element={<SignUp />} />
-//           <Route path="/resources" element={<Resources />} />
-//           <Route path="/disaster" element={<DisasterReportForm />} />
-//         </Routes>
-//       </Router>
-//     </ThemeProvider>
-//   );
-// };
-
-// export default App;
-// App.js
-
-import React from 'react';
-import MapComponent from './components/leafletmap';
-
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <h1>Welcome to My Leaflet Map</h1>
-      <MapComponent />
-    </div>
+    
+    <Router>
+      <Navbar />
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/resources" element={<Resources />} /> {/* Add the Resources page route */}
+        <Route path="/disaster" element={<DisasterReportForm />} /> {/* Add the Disaster report route */}
+      </Routes>
+    </Router>
+
   );
-}
+};
 
 export default App;
-
-
-
-
