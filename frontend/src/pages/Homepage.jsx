@@ -10,6 +10,10 @@ import MapComponent from '../components/maps';
 import Asset1 from '../assets/1.jpg'
 import Asset2 from '../assets/2.jpg'
 import Asset3 from '../assets/3.jpg'
+import Resource from '../assets/resource.png'
+import Geo from '../assets/geo.png'
+import Time from '../assets/time.png'
+
 
 const defaultDisasterData = [
   { type: "Fire", count: 0, color: "red", icon: "🔥" },
@@ -35,7 +39,7 @@ const HeroSection = styled(Box)(({ theme }) => ({
 
 const MapBox = styled(Box)(({ theme }) => ({
   padding: "2rem",
-  backgroundColor: "#f9f9f9",
+  backgroundColor: "#ffffff",
   borderRadius: "8px",
   maxWidth: "800px",
   margin: "auto",
@@ -60,7 +64,7 @@ const Features = styled(Box)(({ theme }) => ({
   borderRadius: "8px",
   maxWidth: "90%",
   margin: "auto",
-  boxShadow: "0 4px 10px rgba(45, 30, 30, 0.1)",
+  //boxShadow: "0 4px 10px rgba(45, 30, 30, 0.1)",
   marginBottom: "2rem",
 }));
 
@@ -187,8 +191,7 @@ const HomePage = () => {
           Disaster Areas
         </Typography>
         <MapBox>
-          {/* <MapComponent /> */}
-         <img src="src\images\temp in nepal.png" alt="Static Map" style={{ width: "100%", maxWidth: "800px", borderRadius: "8px" }} />
+          <MapComponent />
         </MapBox>
       </Container>
     <DisasterCount>
@@ -210,7 +213,7 @@ const HomePage = () => {
         {disasterData.slice(0, 3).map((disaster, index) => (
           <Grid item xs={12} md={4} key={index}>
             <Paper
-              elevation={3}
+              elevation={1}
               sx={{
                 padding: "1rem",
                 textAlign: "center",
@@ -231,9 +234,9 @@ const HomePage = () => {
           </Grid>
         ))}
         {disasterData.slice(3).map((disaster, index) => (
-          <Grid item xs={6} md={6} key={index}>
+          <Grid item xs={6} md={6} mb={4} key={index}>
             <Paper
-              elevation={3}
+              elevation={1}
               sx={{
                 padding: "1rem",
                 textAlign: "center",
@@ -254,19 +257,60 @@ const HomePage = () => {
           </Grid>
         ))}
       </Grid>
-      <Box sx={{ textAlign: "center", marginTop: "1rem" }}>
-        <Button
-          variant="text"
-          sx={{ color: "blue", textDecoration: "underline" }}
-        >
-          
-        </Button>
-      </Box>
       </DisasterCount>
+
+
+    <Features>
+        <Typography variant="h4" align="center" gutterBottom sx={{ paddingBottom: 3 }}>
+          Key Features
+        </Typography>
+        
+        <Grid container spacing={4}>
+          
+        <Grid item xs={12} md={4} container direction="column" alignItems="center">
+
+          <img
+        src= {Time}
+        alt="Time"
+        style={{ width: '100px', height: '100px', objectFit: 'cover', marginBottom: '16px' }}
+      />
+            <Typography variant="h6">Real-Time Reporting</Typography>
+            <Typography variant="body1">
+              Disaster reporting and response coordination
+            </Typography>
+          </Grid>
+          <Grid item xs={12} md={4} container direction="column" alignItems="center">
+
+          <img
+        src= {Resource}
+        alt="Resource"
+        style={{ width: '100px', height: '100px', objectFit: 'cover', marginBottom: '16px' }}
+      />
+            <Typography variant="h6">Resource Management</Typography>
+            <Typography variant="body1">
+            Resources Allocation and Tracking during emergencies.
+            </Typography>
+          </Grid>
+          <Grid item xs={12} md={4} container direction="column" alignItems="center">
+
+          <img
+        src= {Geo}
+        alt="Geo"
+        style={{ width: '100px', height: '100px', objectFit: 'cover', marginBottom: '16px' }}
+      />
+            <Typography variant="h6">Geo-Tagging & Analytics</Typography>
+            <Typography variant="body1">
+              Interactive maps with disaster zones 
+            </Typography>
+          </Grid>
+        </Grid>
+     
       
+      </Features>
+       
       <About id="about">
       <Container maxWidth="lg" sx={{ py: 6, backgroundColor: 'white'}}  >
-      <Typography variant="h4" align="center" gutterBottom>
+      <Typography variant="h4" align="center" gutterBottom sx={{ paddingBottom: 3 }}>
       About Us
     </Typography>
     
@@ -277,38 +321,7 @@ const HomePage = () => {
     </Typography>
     
     </Container>
-    </About>
-
-    <Features>
-        <Typography variant="h4" align="center" gutterBottom>
-          Key Features
-        </Typography>
-        
-        <Grid container spacing={4}>
-          
-          <Grid item xs={12} md={4}>
-            <Typography variant="h6">Real-Time Reporting</Typography>
-            <Typography variant="body1">
-              Report disasters in real-time to alert others and coordinate responses.
-            </Typography>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <Typography variant="h6">Resource Management</Typography>
-            <Typography variant="body1">
-              Allocate and track resources effectively during emergencies.
-            </Typography>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <Typography variant="h6">Geo-Tagging & Analytics</Typography>
-            <Typography variant="body1">
-              Analyze disaster zones and response effectiveness with interactive maps.
-            </Typography>
-          </Grid>
-        </Grid>
-     
-      
-      </Features>
-    
+    </About>   
       <Features>
   <Typography variant="h4" align="center" gutterBottom>
     How It Works
