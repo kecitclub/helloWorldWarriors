@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography, Button, Container, Grid, Box } from '@mui/material';
 import { styled } from '@mui/system';
-//import backgroundImage from '../images/rescuee.png';
+import AboutUs from '../components/AboutUs';
 import Paper from '@mui/material/Paper';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
@@ -20,8 +20,6 @@ import DisasterReportsTable from "../components/tables"; // Import the DisasterR
 const defaultDisasterData = [
   { type: "Fire", count: 0, color: "red", icon: "🔥" },
   { type: "Earthquake", count: 0, color: "orange", icon: "📈" },
-  { type: "Animal Incidents", count: 0, color: "orange", icon: "❓" },
-  { type: "Forest Fire", count: 0, color: "orange", icon: "🔥" },
   { type: "Landslide", count: 0, color: "orange", icon: "🌄" },
 ];
 
@@ -40,15 +38,15 @@ const HeroSection = styled(Box)(({ theme }) => ({
 
 //background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${backgroundImage}) no-repeat center center`,
 
-const MapBox = styled(Box)(({ theme }) => ({
-  padding: "2rem",
-  backgroundColor: "#ffffff",
-  borderRadius: "8px",
-  maxWidth: "800px",
-  margin: "auto",
-  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-  marginBottom: "2rem", 
-}));
+// const MapBox = styled(Box)(({ theme }) => ({
+//   padding: "2rem",
+//   backgroundColor: "#ffffff",
+//   borderRadius: "8px",
+//   maxWidth: "800px",
+//   margin: "auto",
+//   boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+//   marginBottom: "2rem", 
+// }));
 
 const About = styled(Box)(({ theme }) => ({
   padding: "2rem",
@@ -67,14 +65,15 @@ const Features = styled(Box)(({ theme }) => ({
   maxWidth: "90%",
   margin: "auto",
   //boxShadow: "0 4px 10px rgba(45, 30, 30, 0.1)",
-  marginBottom: "2rem",
+  marginBottom: "3rem",
+  marginTop: "3rem",
 }));
 
 const DisasterCount = styled(Box)(({ theme }) => ({
   padding: "2rem",
   backgroundColor: "#ffffff",
   borderRadius: "8px",
-  maxWidth: "800px",
+  maxWidth: "1000px",
   margin: "auto",
   boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
   marginBottom: "2rem",
@@ -187,31 +186,12 @@ const HomePage = () => {
           </CarouselItem>
         </Carousel>
       </HeroSection>
-     <Container maxWidth="lg" sx={{ py: 6 }} id="disaster-areas" >
-        <Typography variant="h4" align="center" gutterBottom>
-          Disaster Areas
+      <DisasterCount>
+      <Typography variant="h4" align="center" gutterBottom>
+          Disaster Reports
         </Typography>
-        <MapBox>
-          <MapComponent />
-        </MapBox>
-      </Container>
-    <DisasterCount>
-      <Typography
-        variant="h6"
-        align="center"
-        sx={{
-          backgroundColor: "#802000",
-          color: "#fff",
-          padding: "0.5rem",
-          borderRadius: "4px",
-          fontWeight: "bold",
-        }}
-      >
-        Incident Counts
-      </Typography>
-
       <Grid container spacing={2} sx={{ marginTop: "1rem" }}>
-        {disasterData.slice(0, 3).map((disaster, index) => (
+        {disasterData.map((disaster, index) => (
           <Grid item xs={12} md={4} key={index}>
             <Paper
               elevation={1}
@@ -234,52 +214,16 @@ const HomePage = () => {
             </Paper>
           </Grid>
         ))}
-        {disasterData.slice(3).map((disaster, index) => (
-          <Grid item xs={6} md={6} mb={4} key={index}>
-            <Paper
-              elevation={1}
-              sx={{
-                padding: "1rem",
-                textAlign: "center",
-                borderRadius: "8px",
-                backgroundColor: "#fff",
-              }}
-            >
-              <Typography variant="h5" color={disaster.color}>
-                {disaster.icon}
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{ color: disaster.color, fontWeight: "bold" }}
-              >
-                {disaster.type} ({disaster.count})
-              </Typography>
-            </Paper>
-          </Grid>
-        ))}
       </Grid>
       </DisasterCount>
-
-
       {/* Disaster Reports Table Section */}
       <Container maxWidth="lg" sx={{ py: 6 }}>
-        <Typography variant="h4" align="center" gutterBottom>
-          Disaster Reports
-        </Typography>
         <DisasterReportsTable />
       </Container>
+    
 
-      {/* About Us Section */}
-      <About id="about">
-        <Container maxWidth="lg" sx={{ py: 6 }} >
-          <Typography variant="h4" align="center" gutterBottom>
-            About Us
-          </Typography>
-          <Typography variant="body1">
-            RahatSutra: Crowdsourced Disaster Reporting and Relief is an innovative platform aimed at revolutionizing disaster response through real-time reporting, resource management, and volunteer coordination...
-          </Typography>
-        </Container>
-      </About>
+      <MapComponent />
+
 
     <Features>
         <Typography variant="h4" align="center" gutterBottom sx={{ paddingBottom: 3 }}>
@@ -325,21 +269,7 @@ const HomePage = () => {
           </Grid>
         </Grid>
       </Features>
-       
-      <About id="about">
-      <Container maxWidth="lg" sx={{ py: 6, backgroundColor: 'white'}}  >
-      <Typography variant="h4" align="center" gutterBottom sx={{ paddingBottom: 3 }}>
-      About Us
-    </Typography>
-    
-   
-    <Typography variant="body1">
-       RahatSutra: Crowdsourced Disaster Reporting and Relief is an innovative platform aimed at revolutionizing disaster response through real-time reporting, resource management, and volunteer coordination. Users can report disasters with detailed information and geotagging, which is visualized on an interactive map showing disaster zones and their needs. The platform provides contact information for relevant relief agencies, enabling quicker communication and support coordination. Volunteers are matched with areas requiring assistance based on their availability and skills. RahatSutra ensures a faster, more efficient, and collaborative disaster relief process.
-
-    </Typography>
-    
-    </Container>
-    </About>   
+      <AboutUs />
       <Features>
   <Typography variant="h4" align="center" gutterBottom>
     How It Works

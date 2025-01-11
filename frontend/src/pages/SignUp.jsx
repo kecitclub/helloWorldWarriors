@@ -94,8 +94,8 @@ const Signup = () => {
 
     try {
       const response = await axios.post("http://127.0.0.1:8000/auth/users/", userPayload);
-      alert("Signup successful! Please activate your account.");
-      navigate("/activate"); // Navigate to the activate page after successful signup
+      //alert("Signup successful! Please login.");
+      navigate("/login"); // Navigate to the activate page after successful signup
     } catch (error) {
       console.error("Signup Error:", error.response?.data || error.message);
       alert("Signup failed. Please try again.");
