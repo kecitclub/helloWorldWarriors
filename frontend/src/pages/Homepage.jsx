@@ -1,6 +1,7 @@
 import React from 'react';
 import { Typography, Button, Container, Grid, Box } from '@mui/material';
 import { styled } from '@mui/system';
+//import backgroundImage from '../images/rescuee.png';
 import Paper from '@mui/material/Paper';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
@@ -14,6 +15,7 @@ import Resource from '../assets/resource.png'
 import Geo from '../assets/geo.png'
 import Time from '../assets/time.png'
 
+import DisasterReportsTable from "../components/tables"; // Import the DisasterReportsTable component
 
 const defaultDisasterData = [
   { type: "Fire", count: 0, color: "red", icon: "🔥" },
@@ -36,6 +38,7 @@ const HeroSection = styled(Box)(({ theme }) => ({
   textAlign: "center",
 }));
 
+//background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${backgroundImage}) no-repeat center center`,
 
 const MapBox = styled(Box)(({ theme }) => ({
   padding: "2rem",
@@ -49,13 +52,12 @@ const MapBox = styled(Box)(({ theme }) => ({
 
 const About = styled(Box)(({ theme }) => ({
   padding: "2rem",
-  backgroundColor: "rgba(8, 7, 7, 0.5)",
+  backgroundColor: "rgb(255, 255, 255)",
   borderRadius: "8px",
   maxWidth: "90%",
   margin: "auto",
-  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+  boxShadow: "0 4px 10px rgb(255, 255, 255)",
   marginBottom: "2rem",
- 
 }));
 
 const Features = styled(Box)(({ theme }) => ({
@@ -164,25 +166,24 @@ const HomePage = () => {
             }}
           >
             <Typography variant="h3" gutterBottom>
-            Support Those in Need - Donate for Disaster Relief
-        </Typography>
-        <Typography variant="body1" gutterBottom>
-        Every minute counts in a disaster. Your donation can make a life-saving difference.
-        Join RahatSutra’s mission to provide essential aid and relief to disaster-affected areas.
-        </Typography>
+              Support Those in Need - Donate for Disaster Relief
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              Every minute counts in a disaster. Your donation can make a life-saving difference. Join RahatSutra’s mission to provide essential aid and relief to disaster-affected areas.
+            </Typography>
           </CarouselItem>
 
           <CarouselItem
             style={{
-              backgroundImage: 'linear-gradient(rgba(0, 0.5, 0, 1), rgba(0, 0, 0, 0.5)),url(src/images/collaboration.jpg)', // Add the third background image URL
+              backgroundImage: 'linear-gradient(rgba(0, 0.5, 0, 1), rgba(0, 0, 0, 0.5)),url(src/images/collaboration.jpg)', 
             }}
           >
             <Typography variant="h3" gutterBottom>
-            Join the Collaborative Effort to Save Lives
-        </Typography>
-        <Typography variant="body1" gutterBottom>
-        Be part of the solution. Rahat Sutra invites you to participate in crowdsourced disaster reporting and relief, ensuring communities receive timely support and assistance.
-        </Typography>
+              Join the Collaborative Effort to Save Lives
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              Be part of the solution. Rahat Sutra invites you to participate in crowdsourced disaster reporting and relief, ensuring communities receive timely support and assistance.
+            </Typography>
           </CarouselItem>
         </Carousel>
       </HeroSection>
@@ -260,11 +261,30 @@ const HomePage = () => {
       </DisasterCount>
 
 
+      {/* Disaster Reports Table Section */}
+      <Container maxWidth="lg" sx={{ py: 6 }}>
+        <Typography variant="h4" align="center" gutterBottom>
+          Disaster Reports
+        </Typography>
+        <DisasterReportsTable />
+      </Container>
+
+      {/* About Us Section */}
+      <About id="about">
+        <Container maxWidth="lg" sx={{ py: 6 }} >
+          <Typography variant="h4" align="center" gutterBottom>
+            About Us
+          </Typography>
+          <Typography variant="body1">
+            RahatSutra: Crowdsourced Disaster Reporting and Relief is an innovative platform aimed at revolutionizing disaster response through real-time reporting, resource management, and volunteer coordination...
+          </Typography>
+        </Container>
+      </About>
+
     <Features>
         <Typography variant="h4" align="center" gutterBottom sx={{ paddingBottom: 3 }}>
           Key Features
         </Typography>
-        
         <Grid container spacing={4}>
           
         <Grid item xs={12} md={4} container direction="column" alignItems="center">
@@ -304,8 +324,6 @@ const HomePage = () => {
             </Typography>
           </Grid>
         </Grid>
-     
-      
       </Features>
        
       <About id="about">

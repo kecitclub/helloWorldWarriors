@@ -5,9 +5,7 @@ import {
   TextField,
   Button,
   Typography,
-  FormControlLabel,
-  Checkbox,
-  Box,
+  FormHelperText,
 } from "@mui/material";
 import axios from "axios";
 
@@ -19,35 +17,67 @@ const Signup = () => {
     middle_name: "",
     last_name: "",
     password: "",
-    re_password: "", // Added re-enter password field
-    address: "",
-    is_volunteer: false,
-    response_radius: "",
-    days_available: [],
-    time_preferences: {},
-    is_part_time: false,
-    emergency_contact_name: "",
-    emergency_contact_no: "",
+    re_password: "",
   });
 
+  const [passwordStrengthMessage, setPasswordStrengthMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     });
+
+    if (name === "password") {
+      checkPasswordStrength(value);
+    }
+  };
+
+  const checkPasswordStrength = (password) => {
+    const minLength = 8;
+    const minUppercase = 1;
+    const minLowercase = 1;
+    const minNumbers = 1;
+    const minSpecialChars = 1;
+
+    const uppercaseRegex = /[A-Z]/g;
+    const lowercaseRegex = /[a-z]/g;
+    const numbersRegex = /[0-9]/g;
+    const specialCharsRegex = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/g;
+
+    const isLengthSufficient = password.length >= minLength;
+    const hasUppercase = (password.match(uppercaseRegex) || []).length >= minUppercase;
+    const hasLowercase = (password.match(lowercaseRegex) || []).length >= minLowercase;
+    const hasNumbers = (password.match(numbersRegex) || []).length >= minNumbers;
+    const hasSpecialChars = (password.match(specialCharsRegex) || []).length >= minSpecialChars;
+
+    const isStrong = isLengthSufficient && hasUppercase && hasLowercase && hasNumbers && hasSpecialChars;
+
+    setPasswordStrengthMessage(
+      isStrong
+        ? ""
+        : "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character."
+    );
+
+    return isStrong;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    // Check if passwords match
     if (formData.password !== formData.re_password) {
       alert("Passwords do not match!");
+      setLoading(false);
+      return;
+    }
+
+    const isStrongPassword = checkPasswordStrength(formData.password);
+    if (!isStrongPassword) {
+      alert("Create a strong password");
       setLoading(false);
       return;
     }
@@ -60,34 +90,12 @@ const Signup = () => {
       last_name: formData.last_name,
       password: formData.password,
       re_password: formData.re_password,
-      is_volunteer: formData.is_volunteer,
     };
 
     try {
-      // Step 1: Create the user
-      const userResponse = await axios.post(
-        "http://127.0.0.1:8000/auth/users/",
-        userPayload
-      );
-
-      if (formData.is_volunteer) {
-        // Step 2: If volunteer, create the volunteer profile
-        const volunteerPayload = {
-          user: userResponse.data.id, // Assuming the user ID is returned in the response
-          address: formData.address,
-          response_radius: formData.response_radius,
-          days_available: formData.days_available,
-          time_preferences: formData.time_preferences,
-          is_part_time: formData.is_part_time,
-          emergency_contact_name: formData.emergency_contact_name,
-          emergency_contact_no: formData.emergency_contact_no,
-        };
-
-        await axios.post("http://127.0.0.1:8000/volunteer/register/", volunteerPayload);
-      }
-
-      alert("Signup successful!");
-      navigate("/thank-you");
+      const response = await axios.post("http://127.0.0.1:8000/auth/users/", userPayload);
+      alert("Signup successful! Please activate your account.");
+      navigate("/activate"); // Navigate to the activate page after successful signup
     } catch (error) {
       console.error("Signup Error:", error.response?.data || error.message);
       alert("Signup failed. Please try again.");
@@ -102,7 +110,6 @@ const Signup = () => {
         Sign Up
       </Typography>
       <form onSubmit={handleSubmit}>
-        {/* General User Fields */}
         <TextField
           fullWidth
           margin="normal"
@@ -158,6 +165,9 @@ const Signup = () => {
           onChange={handleChange}
           required
         />
+        {passwordStrengthMessage && (
+          <FormHelperText error>{passwordStrengthMessage}</FormHelperText>
+        )}
         <TextField
           fullWidth
           margin="normal"
@@ -168,76 +178,6 @@ const Signup = () => {
           onChange={handleChange}
           required
         />
-        <FormControlLabel
-          control={
-            <Checkbox
-              name="is_volunteer"
-              checked={formData.is_volunteer}
-              onChange={handleChange}
-            />
-          }
-          label="Are you a volunteer?"
-        />
-
-        {/* Volunteer-Specific Fields */}
-        {formData.is_volunteer && (
-          <Box mt={2}>
-            <Typography variant="h6" gutterBottom>
-              Volunteer Information
-            </Typography>
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Address"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              required
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Response Radius (in km)"
-              name="response_radius"
-              type="number"
-              value={formData.response_radius}
-              onChange={handleChange}
-              required
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Days Available (comma-separated)"
-              name="days_available"
-              value={formData.days_available}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  days_available: e.target.value.split(",").map((day) => day.trim()),
-                })
-              }
-              required
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Emergency Contact Name"
-              name="emergency_contact_name"
-              value={formData.emergency_contact_name}
-              onChange={handleChange}
-              required
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Emergency Contact Number"
-              name="emergency_contact_no"
-              value={formData.emergency_contact_no}
-              onChange={handleChange}
-              required
-            />
-          </Box>
-        )}
         <Button
           type="submit"
           variant="contained"
@@ -254,3 +194,7 @@ const Signup = () => {
 };
 
 export default Signup;
+
+   
+
+  
