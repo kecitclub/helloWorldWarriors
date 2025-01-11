@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { AppBar, Toolbar, Typography, Button, IconButton, Container } from '@mui/material';
+import { useLocation } from "react-router-dom";
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import InfoIcon from '@mui/icons-material/Info';
 import ContactMailIcon from '@mui/icons-material/ContactMail';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer'; // Icon for Donor
+import ReportProblemIcon from '@mui/icons-material/ReportProblem'; // Icon for Report Disaster
+import NotificationsIcon from '@mui/icons-material/Notifications'; // Icon for Notifications
+import FeedbackIcon from '@mui/icons-material/Feedback'; // Icon for Feedback
 import LocalOfferIcon from '@mui/icons-material/LocalOffer'; 
-import ReportProblemIcon from '@mui/icons-material/ReportProblem'; 
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism'; // Icon for Volunteer Signup
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
@@ -38,22 +42,15 @@ const Navbar = () => {
       }
     }
   }, [location]);
-  
 
   return (
     <AppBar position="sticky" sx={{
       background: "rgba(8, 7, 7, 0.5)", 
       backdropFilter: "blur(10px)", 
       boxShadow: "none",
-       
     }}>
       <Container maxWidth="lg">
         <Toolbar>
-          {/* Menu Icon (for potential mobile menu) */}
-          {/* <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
-            <MenuIcon />
-          </IconButton> */}
-
           {/* Application Title */}
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
             RahatSutra
@@ -78,17 +75,27 @@ const Navbar = () => {
           >
             About
           </Button>
-
-
           <Button
             color="inherit"
             component={Link}
-            to="/contact"
+            to="/contact-us"
             startIcon={<ContactMailIcon />}
             sx={{ marginRight: '10px' }}
           >
             Contact
           </Button>
+
+          {/* Feedback Button */}
+          <Button
+            color="inherit"
+            component={Link}
+            to="/feedback"
+            startIcon={<FeedbackIcon />}
+            sx={{ marginLeft: '10px' }}
+          >
+            Feedback
+          </Button>
+
           <Button
             color="inherit"
             component={Link}
@@ -121,10 +128,14 @@ const Navbar = () => {
             component={Link}
             to="/disaster"
             startIcon={<ReportProblemIcon />}
-           
           >
             Report Disaster
           </Button>
+
+          {/* Notification Icon */}
+          <IconButton edge="end" color="inherit" sx={{ ml: 2 }} component={Link} to="/notifications">
+            <NotificationsIcon />
+          </IconButton>
         </Toolbar>
       </Container>
     </AppBar>

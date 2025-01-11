@@ -42,11 +42,11 @@ const MapBox = styled(Box)(({ theme }) => ({
 
 const About = styled(Box)(({ theme }) => ({
   padding: "2rem",
-  backgroundColor: "rgba(8, 7, 7, 0.5)",
+  backgroundColor: "rgb(255, 255, 255)",
   borderRadius: "8px",
   maxWidth: "90%",
   margin: "auto",
-  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+  boxShadow: "0 4px 10px rgb(255, 255, 255)",
   marginBottom: "2rem",
 }));
 

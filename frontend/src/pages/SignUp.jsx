@@ -1,19 +1,26 @@
-import { useState } from 'react';
-import { Container, TextField, Button, Typography } from '@mui/material';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Container,
+  TextField,
+  Button,
+  Typography,
+  FormHelperText,
+} from "@mui/material";
+import axios from "axios";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    phone_number: '',
-    first_name: '',
-    middle_name: '',
-    last_name: '',
-    password: '',
-    re_password: '',
+    email: "",
+    phone_number: "",
+    first_name: "",
+    middle_name: "",
+    last_name: "",
+    password: "",
+    re_password: "",
   });
 
+  const [passwordStrengthMessage, setPasswordStrengthMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -23,6 +30,39 @@ const Signup = () => {
       ...formData,
       [name]: value,
     });
+
+    if (name === "password") {
+      checkPasswordStrength(value);
+    }
+  };
+
+  const checkPasswordStrength = (password) => {
+    const minLength = 8;
+    const minUppercase = 1;
+    const minLowercase = 1;
+    const minNumbers = 1;
+    const minSpecialChars = 1;
+
+    const uppercaseRegex = /[A-Z]/g;
+    const lowercaseRegex = /[a-z]/g;
+    const numbersRegex = /[0-9]/g;
+    const specialCharsRegex = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/g;
+
+    const isLengthSufficient = password.length >= minLength;
+    const hasUppercase = (password.match(uppercaseRegex) || []).length >= minUppercase;
+    const hasLowercase = (password.match(lowercaseRegex) || []).length >= minLowercase;
+    const hasNumbers = (password.match(numbersRegex) || []).length >= minNumbers;
+    const hasSpecialChars = (password.match(specialCharsRegex) || []).length >= minSpecialChars;
+
+    const isStrong = isLengthSufficient && hasUppercase && hasLowercase && hasNumbers && hasSpecialChars;
+
+    setPasswordStrengthMessage(
+      isStrong
+        ? ""
+        : "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character."
+    );
+
+    return isStrong;
   };
 
   const handleSubmit = async (e) => {
@@ -30,7 +70,14 @@ const Signup = () => {
     setLoading(true);
 
     if (formData.password !== formData.re_password) {
-      alert('Passwords do not match!');
+      alert("Passwords do not match!");
+      setLoading(false);
+      return;
+    }
+
+    const isStrongPassword = checkPasswordStrength(formData.password);
+    if (!isStrongPassword) {
+      alert("Create a strong password");
       setLoading(false);
       return;
     }
@@ -44,48 +91,24 @@ const Signup = () => {
       password: formData.password,
       re_password: formData.re_password,
     };
-    console.log('Signup Payload:', userPayload);
+
     try {
-      // Send signup request
-      const response = await axios.post('http://127.0.0.1:8000/auth/users/', userPayload);
-      
-      alert('Signup successful!');
-      navigate('/Login');
+      const response = await axios.post("http://127.0.0.1:8000/auth/users/", userPayload);
+      alert("Signup successful! Please activate your account.");
+      navigate("/activate"); // Navigate to the activate page after successful signup
     } catch (error) {
-      console.error('Signup Error:', error.response?.data || error.message);
-      alert('Signup failed. Please try again.');
+      console.error("Signup Error:", error.response?.data || error.message);
+      alert("Signup failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Container
-      maxWidth="xs" // Compact form size
-      sx={{
-        marginTop: '2rem',
-        backgroundColor: '#ffffff',
-        borderRadius: 2,
-        padding: 3,
-        boxShadow: 3,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <Typography
-        variant="h4"
-        align="center"
-        gutterBottom
-        sx={{
-          fontFamily: 'Roboto', // Same font as Resources page
-          fontWeight: 'bold',
-        }}
-      >
+    <Container maxWidth="sm" style={{ marginTop: "2rem" }}>
+      <Typography variant="h4" align="center" gutterBottom>
         Sign Up
       </Typography>
-
       <form onSubmit={handleSubmit}>
         <TextField
           fullWidth
@@ -95,13 +118,6 @@ const Signup = () => {
           value={formData.first_name}
           onChange={handleChange}
           required
-          sx={{
-            borderRadius: '8px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            '&:hover': {
-              boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
-            },
-          }}
         />
         <TextField
           fullWidth
@@ -110,13 +126,6 @@ const Signup = () => {
           name="middle_name"
           value={formData.middle_name}
           onChange={handleChange}
-          sx={{
-            borderRadius: '8px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            '&:hover': {
-              boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
-            },
-          }}
         />
         <TextField
           fullWidth
@@ -126,13 +135,6 @@ const Signup = () => {
           value={formData.last_name}
           onChange={handleChange}
           required
-          sx={{
-            borderRadius: '8px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            '&:hover': {
-              boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
-            },
-          }}
         />
         <TextField
           fullWidth
@@ -143,13 +145,6 @@ const Signup = () => {
           value={formData.email}
           onChange={handleChange}
           required
-          sx={{
-            borderRadius: '8px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            '&:hover': {
-              boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
-            },
-          }}
         />
         <TextField
           fullWidth
@@ -159,13 +154,6 @@ const Signup = () => {
           type="tel"
           value={formData.phone_number}
           onChange={handleChange}
-          sx={{
-            borderRadius: '8px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            '&:hover': {
-              boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
-            },
-          }}
         />
         <TextField
           fullWidth
@@ -176,14 +164,10 @@ const Signup = () => {
           value={formData.password}
           onChange={handleChange}
           required
-          sx={{
-            borderRadius: '8px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            '&:hover': {
-              boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
-            },
-          }}
         />
+        {passwordStrengthMessage && (
+          <FormHelperText error>{passwordStrengthMessage}</FormHelperText>
+        )}
         <TextField
           fullWidth
           margin="normal"
@@ -193,32 +177,16 @@ const Signup = () => {
           value={formData.re_password}
           onChange={handleChange}
           required
-          sx={{
-            borderRadius: '8px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            '&:hover': {
-              boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
-            },
-          }}
         />
-
         <Button
           type="submit"
           variant="contained"
           color="primary"
           fullWidth
-          sx={{
-            marginTop: '1rem',
-            borderRadius: '8px',
-            fontWeight: 'bold',
-            backgroundColor: '#C0392B', // Reddish Maroon color
-            '&:hover': {
-              backgroundColor: '#E74C3C', // Lighter red for hover
-            },
-          }}
+          style={{ marginTop: "1rem" }}
           disabled={loading}
         >
-          {loading ? 'Submitting...' : 'Submit'}
+          {loading ? "Submitting..." : "Submit"}
         </Button>
       </form>
     </Container>
@@ -226,3 +194,7 @@ const Signup = () => {
 };
 
 export default Signup;
+
+   
+
+  
