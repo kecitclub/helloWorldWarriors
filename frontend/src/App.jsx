@@ -8,8 +8,10 @@ import DisasterReportForm from "./pages/Disaster"; // Import the Disaster report
 
 const App = () => {
   return (
+    
     <Router>
       <Navbar />
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
@@ -17,6 +19,7 @@ const App = () => {
         <Route path="/disaster" element={<DisasterReportForm />} /> {/* Add the Disaster report route */}
       </Routes>
     </Router>
+
   );
 };
 

@@ -64,7 +64,7 @@ const Resources = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('https://your-backend-api.com/resources', { resources });
+      const response = await axios.post('https://127.0.0.1:8000/resources', { resources });
       console.log('Resources Created:', response.data);
       alert('Resources Created Successfully!');
       setResources([]);
