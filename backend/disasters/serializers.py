@@ -42,3 +42,7 @@ class ResourceRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResourceRequest
         fields = ['id', 'disaster_report', 'requires_volunteer', 'volunteers_type', 'urgency_level', 'resources_needed']
+
+class DisasterReportCountSerializer(serializers.Serializer):
+    disaster_type = serializers.CharField()
+    report_count = serializers.IntegerField()

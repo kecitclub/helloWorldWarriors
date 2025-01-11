@@ -1,3 +1,4 @@
+from django.db.models import Count
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -51,3 +52,20 @@ class ResourceRequestCreateView(generics.CreateAPIView):
         request.data['disaster_report'] = disaster_report_id
 
         return super().create(request, *args, **kwargs)
+    
+class DisasterReportCountView(APIView):
+    def get(self, request, *args, **kwargs):
+        disaster_report_counts = DisasterReport.objects.values('disaster__disaster_type') \
+            .annotate(report_count=Count('id')) \
+            .order_by('disaster__disaster_type') \
+            .values('disaster__disaster_type', 'report_count')  # Rename 'disaster__disaster_type'
+
+        disaster_report_counts = [
+            {
+                'disaster_type': item['disaster__disaster_type'],
+                'report_count': item['report_count']
+            }
+            for item in disaster_report_counts
+        ]
+        
+        return Response(disaster_report_counts, status=status.HTTP_200_OK)
