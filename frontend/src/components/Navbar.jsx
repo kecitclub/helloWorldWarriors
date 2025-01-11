@@ -5,10 +5,10 @@ import HomeIcon from '@mui/icons-material/Home';
 import InfoIcon from '@mui/icons-material/Info';
 import ContactMailIcon from '@mui/icons-material/ContactMail';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import LocalOfferIcon from '@mui/icons-material/LocalOffer'; // Icon for Donor
-import ReportProblemIcon from '@mui/icons-material/ReportProblem'; // Icon for Report Disaster
+import LocalOfferIcon from '@mui/icons-material/LocalOffer'; 
+import ReportProblemIcon from '@mui/icons-material/ReportProblem'; 
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism'; // Icon for Volunteer Signup
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -27,110 +27,104 @@ const Navbar = () => {
     navigate('/'); // Redirect to home after logout
   };
 
+  const location = useLocation();
+
+  // Scroll to 'about' section on page load if the state is passed
+  useEffect(() => {
+    if (location.hash) {
+      const element = document.querySelector(location.hash);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [location]);
+  
+
   return (
-    <AppBar position="sticky" sx={{ backgroundColor: '#d32f2f', height: '60px' }}>
+    <AppBar position="sticky" sx={{
+      background: "rgba(8, 7, 7, 0.5)", 
+      backdropFilter: "blur(10px)", 
+      boxShadow: "none",
+       
+    }}>
       <Container maxWidth="lg">
-        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', height: '60px' }}>
-          {/* Left Section: Menu Icon and Title */}
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
-              RahatSutra
-            </Typography>
-          </div>
+        <Toolbar>
+          {/* Menu Icon (for potential mobile menu) */}
+          {/* <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
+            <MenuIcon />
+          </IconButton> */}
 
-          {/* Center Section: Navigation Buttons */}
-          <div>
-            <Button
-              color="inherit"
-              component={Link}
-              to="/"
-              startIcon={<HomeIcon />}
-              sx={{ marginRight: '10px' }}
-            >
-              Home
-            </Button>
-            <Button
-              color="inherit"
-              component={Link}
-              to="/about"
-              startIcon={<InfoIcon />}
-              sx={{ marginRight: '10px' }}
-            >
-              About
-            </Button>
-            <Button
-              color="inherit"
-              component={Link}
-              to="/contact"
-              startIcon={<ContactMailIcon />}
-              sx={{ marginRight: '10px' }}
-            >
-              Contact
-            </Button>
-            <Button
-              color="inherit"
-              component={Link}
-              to="/resources"
-              startIcon={<LocalOfferIcon />}
-              sx={{ marginRight: '10px' }}
-            >
-              Donor
-            </Button>
-            <Button
-              color="inherit"
-              component={Link}
-              to="/disaster"
-              startIcon={<ReportProblemIcon />}
-              sx={{ marginRight: '10px' }}
-            >
-              Report Disaster
-            </Button>
-            <Button
-              color="inherit"
-              component={Link}
-              to="/volunteer-signup"
-              startIcon={<VolunteerActivismIcon />}
-              sx={{ marginRight: '10px' }}
-            >
-              Volunteer Signup
-            </Button>
-          </div>
+          {/* Application Title */}
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
+            RahatSutra
+          </Typography>
 
-          {/* Right Section: Authentication Buttons */}
-          <div>
-            {!isAuthenticated ? (
-              <Button
-                color="inherit"
-                component={Link}
-                to="/signup"
-                startIcon={<PersonAddIcon />}
-                variant="outlined"
-                sx={{
-                  backgroundColor: '#fff',
-                  color: '#1976d2',
-                  '&:hover': { backgroundColor: '#e3f2fd' },
-                }}
-              >
-                Sign Up
-              </Button>
-            ) : (
-              <Button
-                color="inherit"
-                onClick={handleSignOut}
-                variant="outlined"
-                sx={{
-                  backgroundColor: '#fff',
-                  color: '#1976d2',
-                  '&:hover': { backgroundColor: '#e3f2fd' },
-                }}
-              >
-                Sign Out
-              </Button>
-            )}
-          </div>
+          {/* Navigation Buttons */}
+          <Button
+            color="inherit"
+            component={Link}
+            to="/"
+            startIcon={<HomeIcon />}
+            sx={{ marginRight: '10px' }}
+          >
+            Home
+          </Button>
+          <Button
+            color="inherit"
+            component={Link}
+            to="/#about"
+            startIcon={<InfoIcon />}
+            sx={{ marginRight: '10px' }}
+          >
+            About
+          </Button>
+
+
+          <Button
+            color="inherit"
+            component={Link}
+            to="/contact"
+            startIcon={<ContactMailIcon />}
+            sx={{ marginRight: '10px' }}
+          >
+            Contact
+          </Button>
+          <Button
+            color="inherit"
+            component={Link}
+            to="/signup"
+            startIcon={<PersonAddIcon />}
+            sx={{ marginLeft: '10px' }}
+          >
+            Sign Up
+          </Button>
+
+          {/* Donor Button */}
+          <Button
+            color="inherit"
+            component={Link}
+            to="/Resources"
+            startIcon={<LocalOfferIcon />}
+            sx={{ marginLeft: '10px' }}
+          >
+            Donor
+          </Button>
+
+          {/* Report Disaster Button */}
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: "#802000",  // Custom color
+              color: "white",              // Text color
+              marginLeft: '10px',
+            }}
+            component={Link}
+            to="/disaster"
+            startIcon={<ReportProblemIcon />}
+           
+          >
+            Report Disaster
+          </Button>
         </Toolbar>
       </Container>
     </AppBar>

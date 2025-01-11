@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, Box, Typography } from '@mui/material';
-import axios from 'axios';
+// import axios from 'axios';
 
 const DisasterReportsTable = () => {
   const [disasterReports, setDisasterReports] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [loading, setLoading] = useState(true); // Loading state for fetching data
 
   // Dummy data
   const dummyData = [
@@ -36,8 +37,22 @@ const DisasterReportsTable = () => {
   ];
 
   useEffect(() => {
-    // You can replace this with an actual API call when available.
-    setDisasterReports(dummyData);
+    // Simulating an API call with dummy data
+    setTimeout(() => {
+      setDisasterReports(dummyData); // Simulate data fetching
+      setLoading(false); // Set loading to false once data is fetched
+    }, 1000); // Simulate 1 second delay
+
+    // Commented out the backend fetching code
+    // axios.get('path_to_your_backend_api/reports/')
+    //   .then((response) => {
+    //     setDisasterReports(response.data);
+    //     setLoading(false);
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error fetching data", error);
+    //     setLoading(false);
+    //   });
   }, []);
 
   // Handle page change
@@ -51,102 +66,66 @@ const DisasterReportsTable = () => {
     setPage(0); // Reset to first page when rows per page changes
   };
 
+  if (loading) {
+    return (
+      <Box sx={{ mt: 4, textAlign: 'center' }}>
+        <Typography variant="h6" sx={{ color: '#5f6368' }}>Loading disaster reports...</Typography>
+      </Box>
+    );
+  }
+
   return (
-    <Box sx={{ mt: 4 }}>
+    <Box sx={{ mt: 4, width: '90%', maxWidth: '1200px', margin: '0 auto' }}>
       <TableContainer
         component={Paper}
         sx={{
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.1)', // Soft shadow with glow
-          borderRadius: '12px', // Rounded corners
-          overflow: 'hidden',
+          boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)', // Subtle shadow for modern look
+          borderRadius: '8px', // Rounded corners for modern design
           padding: '16px',
+          backgroundColor: '#FFFFFF',
+          overflow: 'hidden',
         }}
       >
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell
-                sx={{
-                  fontWeight: 'bold',
-                  fontFamily: '"Roboto", sans-serif',
-                  color: '#2C3E50',
-                  letterSpacing: '0.5px',
-                  textAlign: 'center', // Center-align the headers
-                  padding: '16px',
-                }}
-              >
-                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                  Disaster Type
-                </Typography>
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontWeight: 'bold',
-                  fontFamily: '"Roboto", sans-serif',
-                  color: '#2C3E50',
-                  letterSpacing: '0.5px',
-                  textAlign: 'center',
-                  padding: '16px',
-                }}
-              >
-                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                  Description
-                </Typography>
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontWeight: 'bold',
-                  fontFamily: '"Roboto", sans-serif',
-                  color: '#2C3E50',
-                  letterSpacing: '0.5px',
-                  textAlign: 'center',
-                  padding: '16px',
-                }}
-              >
-                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                  Severity Level
-                </Typography>
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontWeight: 'bold',
-                  fontFamily: '"Roboto", sans-serif',
-                  color: '#2C3E50',
-                  letterSpacing: '0.5px',
-                  textAlign: 'center',
-                  padding: '16px',
-                }}
-              >
-                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                  Reported At
-                </Typography>
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontWeight: 'bold',
-                  fontFamily: '"Roboto", sans-serif',
-                  color: '#2C3E50',
-                  letterSpacing: '0.5px',
-                  textAlign: 'center',
-                  padding: '16px',
-                }}
-              >
-                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                  Resource Required
-                </Typography>
-              </TableCell>
+              {['Disaster Type', 'Description', 'Severity Level', 'Reported At', 'Resource Required'].map((header) => (
+                <TableCell
+                  key={header}
+                  sx={{
+                    fontWeight: 'bold',
+                    color: '#34495E',
+                    fontSize: '16px',
+                    textAlign: 'center',
+                    padding: '12px',
+                    backgroundColor: '#F4F6F9',
+                    letterSpacing: '0.5px',
+                    borderBottom: '2px solid #E1E8EB',
+                  }}
+                >
+                  <Typography variant="h6">{header}</Typography>
+                </TableCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>
             {disasterReports
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((report) => (
-                <TableRow key={report.id}>
+                <TableRow
+                  key={report.id}
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: '#F0F4F8', // Light hover effect for interactivity
+                    },
+                    cursor: 'pointer',
+                  }}
+                >
                   <TableCell
                     sx={{
                       fontFamily: '"Arial", sans-serif',
                       color: '#34495E',
-                      textAlign: 'center', // Center-align the text
+                      textAlign: 'center',
                       padding: '12px',
                     }}
                   >
@@ -207,7 +186,7 @@ const DisasterReportsTable = () => {
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-        sx={{ marginTop: '1rem' }}
+        sx={{ marginTop: '1rem', color: '#5f6368' }}
       />
     </Box>
   );
