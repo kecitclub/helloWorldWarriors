@@ -30,12 +30,15 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Volunteer(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, primary_key=True, on_delete=models.CASCADE, related_name="volunteer")
     address = models.CharField(max_length=100)
+    occupation = models.CharField(max_length=100)
+    volunteering_area = models.JSONField(default=list)
     response_radius = models.PositiveIntegerField(default=20)
     days_available = models.JSONField(default=list)
     time_preferences = models.JSONField(default=dict, blank=True, null=True)
     is_part_time = models.BooleanField(default=False)
     emergency_contact_name = models.CharField(max_length = 100)
     emergency_contact_no = models.CharField(max_length=15)
+    is_available = models.BooleanField(default=True)
 
     def _str_(self):
         return f"{self.user.first_name} {self.user.last_name}"

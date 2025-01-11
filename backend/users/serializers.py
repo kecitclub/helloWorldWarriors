@@ -26,7 +26,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 class VolunteerSignUpSerializer(serializers.ModelSerializer):
     class Meta:
         model = Volunteer
-        fields = ['address', 'response_radius', 'days_available', 'time_preferences', 'is_part_time', 'emergency_contact_name', 'emergency_contact_no']
+        fields = ['address', 'response_radius', 'days_available', 'occupation', 'volunteering_area','time_preferences', 'is_part_time', 'emergency_contact_name', 'emergency_contact_no', 'is_available']
 
     def create(self, validated_data):
         user = self.context['request'].user

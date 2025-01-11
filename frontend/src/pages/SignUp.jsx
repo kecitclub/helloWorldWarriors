@@ -5,49 +5,102 @@ import {
   TextField,
   Button,
   Typography,
-  FormControlLabel,
-  Checkbox,
-  Box,
+  FormHelperText,
 } from "@mui/material";
+import axios from "axios";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
     email: "",
+    phone_number: "",
+    first_name: "",
+    middle_name: "",
+    last_name: "",
     password: "",
-    phone: "",
-    address: "",
-    isVolunteer: false,
-    availability: false,
-    coverageRadius: "",
-    occupation: "",
-    serviceType: "",
-    experience: "",
-    location: "",
+    re_password: "",
   });
 
+  const [passwordStrengthMessage, setPasswordStrengthMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     });
+
+    if (name === "password") {
+      checkPasswordStrength(value);
+    }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const checkPasswordStrength = (password) => {
+    const minLength = 8;
+    const minUppercase = 1;
+    const minLowercase = 1;
+    const minNumbers = 1;
+    const minSpecialChars = 1;
 
-    if (formData.isVolunteer) {
-      console.log("Volunteer Data:", formData);
-      alert("Volunteer Signup successful!");
-      navigate("/thank-you");
-    } else {
-      console.log("User Data:", formData);
-      alert("Signup successful!");
-      navigate("/thank-you");
+    const uppercaseRegex = /[A-Z]/g;
+    const lowercaseRegex = /[a-z]/g;
+    const numbersRegex = /[0-9]/g;
+    const specialCharsRegex = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/g;
+
+    const isLengthSufficient = password.length >= minLength;
+    const hasUppercase = (password.match(uppercaseRegex) || []).length >= minUppercase;
+    const hasLowercase = (password.match(lowercaseRegex) || []).length >= minLowercase;
+    const hasNumbers = (password.match(numbersRegex) || []).length >= minNumbers;
+    const hasSpecialChars = (password.match(specialCharsRegex) || []).length >= minSpecialChars;
+
+    const isStrong = isLengthSufficient && hasUppercase && hasLowercase && hasNumbers && hasSpecialChars;
+
+    setPasswordStrengthMessage(
+      isStrong
+        ? ""
+        : "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character."
+    );
+
+    return isStrong;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    if (formData.password !== formData.re_password) {
+      alert("Passwords do not match!");
+      setLoading(false);
+      return;
+    }
+
+    const isStrongPassword = checkPasswordStrength(formData.password);
+    if (!isStrongPassword) {
+      alert("Create a strong password");
+      setLoading(false);
+      return;
+    }
+
+    const userPayload = {
+      email: formData.email,
+      phone_number: formData.phone_number,
+      first_name: formData.first_name,
+      middle_name: formData.middle_name,
+      last_name: formData.last_name,
+      password: formData.password,
+      re_password: formData.re_password,
+    };
+
+    try {
+      const response = await axios.post("http://127.0.0.1:8000/auth/users/", userPayload);
+      alert("Signup successful! Please activate your account.");
+      navigate("/activate"); // Navigate to the activate page after successful signup
+    } catch (error) {
+      console.error("Signup Error:", error.response?.data || error.message);
+      alert("Signup failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -57,22 +110,29 @@ const Signup = () => {
         Sign Up
       </Typography>
       <form onSubmit={handleSubmit}>
-        {/* General User Fields */}
         <TextField
           fullWidth
           margin="normal"
           label="First Name"
-          name="firstName"
-          value={formData.firstName}
+          name="first_name"
+          value={formData.first_name}
           onChange={handleChange}
           required
         />
         <TextField
           fullWidth
           margin="normal"
+          label="Middle Name"
+          name="middle_name"
+          value={formData.middle_name}
+          onChange={handleChange}
+        />
+        <TextField
+          fullWidth
+          margin="normal"
           label="Last Name"
-          name="lastName"
-          value={formData.lastName}
+          name="last_name"
+          value={formData.last_name}
           onChange={handleChange}
           required
         />
@@ -89,6 +149,15 @@ const Signup = () => {
         <TextField
           fullWidth
           margin="normal"
+          label="Phone Number"
+          name="phone_number"
+          type="tel"
+          value={formData.phone_number}
+          onChange={handleChange}
+        />
+        <TextField
+          fullWidth
+          margin="normal"
           label="Password"
           name="password"
           type="password"
@@ -96,110 +165,28 @@ const Signup = () => {
           onChange={handleChange}
           required
         />
-        <TextField
-          fullWidth
-          margin="normal"
-          label="Phone"
-          name="phone"
-          type="tel"
-          value={formData.phone}
-          onChange={handleChange}
-          required
-        />
-        <TextField
-          fullWidth
-          margin="normal"
-          label="Address"
-          name="address"
-          value={formData.address}
-          onChange={handleChange}
-          required
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              name="isVolunteer"
-              checked={formData.isVolunteer}
-              onChange={handleChange}
-            />
-          }
-          label="Are you a volunteer?"
-        />
-
-        {/* Volunteer-Specific Fields */}
-        {formData.isVolunteer && (
-          <Box mt={2}>
-            <Typography variant="h6" gutterBottom>
-              Volunteer Information
-            </Typography>
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Occupation"
-              name="occupation"
-              value={formData.occupation}
-              onChange={handleChange}
-              required
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Type of Service to Provide"
-              name="serviceType"
-              value={formData.serviceType}
-              onChange={handleChange}
-              required
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Past Experience"
-              name="experience"
-              value={formData.experience}
-              onChange={handleChange}
-              multiline
-              rows={4}
-              required
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Location"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              required
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="availability"
-                  checked={formData.availability}
-                  onChange={handleChange}
-                />
-              }
-              label="Are you currently available?"
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Coverage Radius (in km)"
-              name="coverageRadius"
-              type="number"
-              value={formData.coverageRadius}
-              onChange={handleChange}
-              required
-            />
-          </Box>
+        {passwordStrengthMessage && (
+          <FormHelperText error>{passwordStrengthMessage}</FormHelperText>
         )}
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Re-enter Password"
+          name="re_password"
+          type="password"
+          value={formData.re_password}
+          onChange={handleChange}
+          required
+        />
         <Button
           type="submit"
           variant="contained"
           color="primary"
           fullWidth
           style={{ marginTop: "1rem" }}
+          disabled={loading}
         >
-          Submit
+          {loading ? "Submitting..." : "Submit"}
         </Button>
       </form>
     </Container>
