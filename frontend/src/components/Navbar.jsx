@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppBar, Toolbar, Typography, Button, IconButton, Container } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
@@ -7,9 +7,26 @@ import ContactMailIcon from '@mui/icons-material/ContactMail';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer'; 
 import ReportProblemIcon from '@mui/icons-material/ReportProblem'; 
-import { Link, useLocation } from 'react-router-dom';
+import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism'; // Icon for Volunteer Signup
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
+
+  // Check if token exists (assuming token is stored in localStorage)
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    setIsAuthenticated(!!token);
+  }, []);
+
+  // Handle Sign Out
+  const handleSignOut = () => {
+    localStorage.removeItem('authToken');
+    setIsAuthenticated(false);
+    navigate('/'); // Redirect to home after logout
+  };
+
   const location = useLocation();
 
   // Scroll to 'about' section on page load if the state is passed

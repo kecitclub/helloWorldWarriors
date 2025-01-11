@@ -1,11 +1,13 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import Home from "./pages/Homepage"; // Ensure the file name matches
-import SignUp from "./pages/SignUp"; // Ensure the file name matches
-import Resources from "./pages/Resources"; // Import the new ResourcesPage
-import DisasterReportForm from "./pages/Disaster"; // Import the Disaster report form page
-
+import Home from "./pages/Homepage"; 
+import SignUp from "./pages/SignUp"; 
+import Resources from "./pages/Resources"; 
+import DisasterReportForm from "./pages/Disaster"; 
+import VolunteerSignup from "./pages/VolunteerSignup"; 
+import Login from "./pages/Login"; 
+import DisasterReportsTable from "./components/tables";
 const App = () => {
   return (
     

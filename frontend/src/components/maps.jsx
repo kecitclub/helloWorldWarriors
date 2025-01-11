@@ -28,6 +28,8 @@ const MapComponent = () => {
   const mapRef = useRef(null);
   const [disasters, setDisasters] = useState([]);
   const [activeMarker, setActiveMarker] = useState(null);
+  const [disasters, setDisasters] = useState([]);
+  const [activeMarker, setActiveMarker] = useState(null);
 
   const onLoad = useCallback((map) => {
     mapRef.current = map;
@@ -71,11 +73,41 @@ const MapComponent = () => {
     console.log(`Disaster ID: ${disaster.id}, Latitude: ${disaster.latitude}, Longitude: ${disaster.longitude}`);
   });
 
+  useEffect(() => {
+    // Fetch disaster data from Django API endpoint
+    axios.get('http://localhost:8000/disasters/')
+      .then(response => {
+        console.log(response.data); // Log the response to check the structure
+        setDisasters(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching disaster data:', error);
+      });
+  }, []);
+
+  // Format the date for display
+  const formatDate = (date) => {
+    const d = new Date(date);
+    return d.toLocaleDateString(); // Customize this format as needed
+  };
+
+  // Filter disasters within Nepal's approximate latitude/longitude range
+  const filteredDisasters = disasters.filter(disaster =>
+    disaster.latitude >= 26 && disaster.latitude <= 31 &&
+    disaster.longitude >= 80 && disaster.longitude <= 89
+  );
+
+  // Log the filtered disasters to check if they are within Nepal's boundaries
+  filteredDisasters.forEach((disaster) => {
+    console.log(`Disaster ID: ${disaster.id}, Latitude: ${disaster.latitude}, Longitude: ${disaster.longitude}`);
+  });
+
   return (
     <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={center}
+        zoom={8}
         zoom={8}
         onLoad={onLoad}
         onUnmount={onUnmount}

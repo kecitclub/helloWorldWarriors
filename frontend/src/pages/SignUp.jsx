@@ -1,43 +1,27 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  Container,
-  TextField,
-  Button,
-  Typography,
-  FormControlLabel,
-  Checkbox,
-  Box,
-} from "@mui/material";
-import axios from "axios";
+import { useState } from 'react';
+import { Container, TextField, Button, Typography } from '@mui/material';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
-    email: "",
-    phone_number: "",
-    first_name: "",
-    middle_name: "",
-    last_name: "",
-    password: "",
-    re_password: "", // Added re-enter password field
-    address: "",
-    is_volunteer: false,
-    response_radius: "",
-    days_available: [],
-    time_preferences: {},
-    is_part_time: false,
-    emergency_contact_name: "",
-    emergency_contact_no: "",
+    email: '',
+    phone_number: '',
+    first_name: '',
+    middle_name: '',
+    last_name: '',
+    password: '',
+    re_password: '',
   });
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     });
   };
 
@@ -45,9 +29,8 @@ const Signup = () => {
     e.preventDefault();
     setLoading(true);
 
-    // Check if passwords match
     if (formData.password !== formData.re_password) {
-      alert("Passwords do not match!");
+      alert('Passwords do not match!');
       setLoading(false);
       return;
     }
@@ -60,49 +43,50 @@ const Signup = () => {
       last_name: formData.last_name,
       password: formData.password,
       re_password: formData.re_password,
-      is_volunteer: formData.is_volunteer,
     };
-
+    console.log('Signup Payload:', userPayload);
     try {
-      // Step 1: Create the user
-      const userResponse = await axios.post(
-        "http://127.0.0.1:8000/auth/users/",
-        userPayload
-      );
-
-      if (formData.is_volunteer) {
-        // Step 2: If volunteer, create the volunteer profile
-        const volunteerPayload = {
-          user: userResponse.data.id, // Assuming the user ID is returned in the response
-          address: formData.address,
-          response_radius: formData.response_radius,
-          days_available: formData.days_available,
-          time_preferences: formData.time_preferences,
-          is_part_time: formData.is_part_time,
-          emergency_contact_name: formData.emergency_contact_name,
-          emergency_contact_no: formData.emergency_contact_no,
-        };
-
-        await axios.post("http://127.0.0.1:8000/volunteer/register/", volunteerPayload);
-      }
-
-      alert("Signup successful!");
-      navigate("/thank-you");
+      // Send signup request
+      const response = await axios.post('http://127.0.0.1:8000/auth/users/', userPayload);
+      
+      alert('Signup successful!');
+      navigate('/Login');
     } catch (error) {
-      console.error("Signup Error:", error.response?.data || error.message);
-      alert("Signup failed. Please try again.");
+      console.error('Signup Error:', error.response?.data || error.message);
+      alert('Signup failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Container maxWidth="sm" style={{ marginTop: "2rem" }}>
-      <Typography variant="h4" align="center" gutterBottom>
+    <Container
+      maxWidth="xs" // Compact form size
+      sx={{
+        marginTop: '2rem',
+        backgroundColor: '#ffffff',
+        borderRadius: 2,
+        padding: 3,
+        boxShadow: 3,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <Typography
+        variant="h4"
+        align="center"
+        gutterBottom
+        sx={{
+          fontFamily: 'Roboto', // Same font as Resources page
+          fontWeight: 'bold',
+        }}
+      >
         Sign Up
       </Typography>
+
       <form onSubmit={handleSubmit}>
-        {/* General User Fields */}
         <TextField
           fullWidth
           margin="normal"
@@ -111,6 +95,13 @@ const Signup = () => {
           value={formData.first_name}
           onChange={handleChange}
           required
+          sx={{
+            borderRadius: '8px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            '&:hover': {
+              boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
+            },
+          }}
         />
         <TextField
           fullWidth
@@ -119,6 +110,13 @@ const Signup = () => {
           name="middle_name"
           value={formData.middle_name}
           onChange={handleChange}
+          sx={{
+            borderRadius: '8px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            '&:hover': {
+              boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
+            },
+          }}
         />
         <TextField
           fullWidth
@@ -128,6 +126,13 @@ const Signup = () => {
           value={formData.last_name}
           onChange={handleChange}
           required
+          sx={{
+            borderRadius: '8px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            '&:hover': {
+              boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
+            },
+          }}
         />
         <TextField
           fullWidth
@@ -138,6 +143,13 @@ const Signup = () => {
           value={formData.email}
           onChange={handleChange}
           required
+          sx={{
+            borderRadius: '8px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            '&:hover': {
+              boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
+            },
+          }}
         />
         <TextField
           fullWidth
@@ -147,6 +159,13 @@ const Signup = () => {
           type="tel"
           value={formData.phone_number}
           onChange={handleChange}
+          sx={{
+            borderRadius: '8px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            '&:hover': {
+              boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
+            },
+          }}
         />
         <TextField
           fullWidth
@@ -157,6 +176,13 @@ const Signup = () => {
           value={formData.password}
           onChange={handleChange}
           required
+          sx={{
+            borderRadius: '8px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            '&:hover': {
+              boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
+            },
+          }}
         />
         <TextField
           fullWidth
@@ -167,86 +193,32 @@ const Signup = () => {
           value={formData.re_password}
           onChange={handleChange}
           required
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              name="is_volunteer"
-              checked={formData.is_volunteer}
-              onChange={handleChange}
-            />
-          }
-          label="Are you a volunteer?"
+          sx={{
+            borderRadius: '8px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            '&:hover': {
+              boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
+            },
+          }}
         />
 
-        {/* Volunteer-Specific Fields */}
-        {formData.is_volunteer && (
-          <Box mt={2}>
-            <Typography variant="h6" gutterBottom>
-              Volunteer Information
-            </Typography>
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Address"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              required
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Response Radius (in km)"
-              name="response_radius"
-              type="number"
-              value={formData.response_radius}
-              onChange={handleChange}
-              required
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Days Available (comma-separated)"
-              name="days_available"
-              value={formData.days_available}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  days_available: e.target.value.split(",").map((day) => day.trim()),
-                })
-              }
-              required
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Emergency Contact Name"
-              name="emergency_contact_name"
-              value={formData.emergency_contact_name}
-              onChange={handleChange}
-              required
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Emergency Contact Number"
-              name="emergency_contact_no"
-              value={formData.emergency_contact_no}
-              onChange={handleChange}
-              required
-            />
-          </Box>
-        )}
         <Button
           type="submit"
           variant="contained"
           color="primary"
           fullWidth
-          style={{ marginTop: "1rem" }}
+          sx={{
+            marginTop: '1rem',
+            borderRadius: '8px',
+            fontWeight: 'bold',
+            backgroundColor: '#C0392B', // Reddish Maroon color
+            '&:hover': {
+              backgroundColor: '#E74C3C', // Lighter red for hover
+            },
+          }}
           disabled={loading}
         >
-          {loading ? "Submitting..." : "Submit"}
+          {loading ? 'Submitting...' : 'Submit'}
         </Button>
       </form>
     </Container>
