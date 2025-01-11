@@ -49,12 +49,9 @@ const Login = () => {
       const data = await response.json();
       const { access, refresh } = data;
 
-      // Store the tokens in localStorage (consider using a secure storage mechanism)
       localStorage.setItem("authToken", access);
       localStorage.setItem("refreshToken", refresh);
-
-      alert("Login successful!");
-      navigate("/"); // Navigate to homepage after successful login
+      navigate("/"); 
     } catch (err) {
       setError(err.message || "An unexpected error occurred during login.");
     } finally {

@@ -135,7 +135,15 @@ const FeedbackForm = () => {
               variant="contained"
               color="primary"
               fullWidth
-              sx={{ marginTop: 2 }}
+              sx={{
+                marginTop: 2, 
+                borderRadius: '8px',
+                fontWeight: 'bold',
+                backgroundColor: '#C0392B', 
+                '&:hover': {
+                  backgroundColor: '#E74C3C', 
+                },
+              }}
             >
               Submit Feedback
             </Button>

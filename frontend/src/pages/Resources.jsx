@@ -280,9 +280,9 @@ const Resources = () => {
           sx={{
             borderRadius: '8px',
             fontWeight: 'bold',
-            backgroundColor: '#C0392B', // Reddish Maroon color
+            backgroundColor: '#C0392B', 
             '&:hover': {
-              backgroundColor: '#E74C3C', // Lighter red for hover
+              backgroundColor: '#E74C3C', 
             },
           }}
         >

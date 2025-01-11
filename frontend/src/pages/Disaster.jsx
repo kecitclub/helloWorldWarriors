@@ -330,6 +330,14 @@ const DisasterReportForm = () => {
           fullWidth
           style={{ marginTop: "1rem" }}
           disabled={loading}
+          sx={{
+            borderRadius: '8px',
+            fontWeight: 'bold',
+            backgroundColor: '#C0392B', 
+            '&:hover': {
+              backgroundColor: '#E74C3C', 
+            },
+          }}
         >
           {loading ? "Submitting..." : "Submit Report"}
         </Button>
