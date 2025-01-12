@@ -151,7 +151,10 @@ REST_FRAMEWORK = {
     
     
 }
-DOMAIN= 'DOMAIN'
+
+
+
+DOMAIN= 'localhost:5173'
 SITE_NAME= 'RahatSutra'
 DJOSER= {
     'USER_CREATE_PASSWORD_RETYPE' : True  ,
@@ -170,3 +173,4 @@ DJOSER= {
 
 AUTH_USER_MODEL = "users.User"
 CORS_ALLOW_ALL_ORIGINS = True
+
